@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
+
+<title>MICS Admin Area</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="brand">
+
+<img
+  src="school-logo.png"
+  alt="MICS Logo"
+>
+
+<div>
+
+<h1>
+Morgan International Community School
+</h1>
+
+<p>
+Admin Area
+</p>
+
+</div>
+
+</div>
+
+
+<nav>
+
+<a href="index.html">
+Public Site
+</a>
+
+</nav>
+
+</header>
+
+
+
+<main class="admin">
+
+
+<section
+  id="loginSection"
+  class="card"
+>
+
+<span>
+SECURE AREA
+</span>
+
+<h2>
+Admin Login
+</h2>
+
+
+<form id="loginForm">
+
+<label>
+
+Password
+
+<input
+  id="adminPassword"
+  type="password"
+  required
+>
+
+</label>
+
+
+<button class="btn gold">
+Sign In
+</button>
+
+
+<p
+  id="loginError"
+  class="error"
+  hidden
+>
+Incorrect password.
+</p>
+
+
+</form>
+
+</section>
+
+
+
+<section
+  id="dashboard"
+  hidden
+>
+
+
+<div class="heading">
+
+<div>
+
+<span>
+DASHBOARD
+</span>
+
+<h2>
+Manage School Updates
+</h2>
+
+</div>
+
+
+<button
+  id="logoutButton"
+  class="btn black"
+>
+Log Out
+</button>
+
+</div>
+
+
+
+<div class="adminGrid">
+
+
+<section class="card">
+
+
+<h3 id="formTitle">
+Add Announcement
+</h3>
+
+
+<form id="announcementForm">
+
+
+<input
+  id="editId"
+  type="hidden"
+>
+
+
+<label>
+
+Title
+
+<input
+  id="title"
+  maxlength="100"
+  required
+>
+
+</label>
+
+
+<label>
+
+Message
+
+<textarea
+  id="message"
+  maxlength="1000"
+  rows="6"
+  required
+></textarea>
+
+</label>
+
+
+<label>
+
+Category
+
+<select id="category">
+
+<option value="important">
+Important
+</option>
+
+<option value="academic">
+Academic
+</option>
+
+<option value="sports">
+Sports
+</option>
+
+<option value="events">
+Events
+</option>
+
+</select>
+
+</label>
+
+
+<button class="btn gold">
+Save Announcement
+</button>
+
+
+<button
+  id="cancelEdit"
+  class="btn outline"
+  type="button"
+  hidden
+>
+Cancel Edit
+</button>
+
+
+</form>
+
+</section>
+
+
+
+<section class="card">
+
+<h3>
+Announcements
+</h3>
+
+<div id="adminList"></div>
+
+</section>
+
+
+</div>
+
+
+
+<section class="card">
+
+
+<div class="heading">
+
+<h3>
+Comments Awaiting Review
+</h3>
+
+
+<button
+  id="clearComments"
+  class="btn outline"
+>
+Delete All Comments
+</button>
+
+</div>
+
+
+<div id="commentList"></div>
+
+
+</section>
+
+
+</section>
+
+
+</main>
+
+
+<script src="admin.js"></script>
+
+</body>
+
+</html>
