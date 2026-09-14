@@ -1,11 +1,12 @@
 // ========================================
 // SUPABASE CONNECTION
 // ========================================
-const SUPABASE_URL = "https://twbpewwzclktdkavrrgy.supabase.co";
+
+const SUPABASE_URL =
+  "https://twbpewwzclktdkavrrgy.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_oj9LKr__BayRnwrEzBMgcw_C5g2zc5c";
-
 
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
@@ -19,15 +20,21 @@ const supabaseClient = supabase.createClient(
 
 async function loadAnnouncements() {
 
+  console.log("Loading announcements...");
+
   const { data, error } = await supabaseClient
     .from("announcements")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*");
 
   if (error) {
-    console.error("Error loading announcements:", error);
 
-    const list = document.getElementById("announcementList");
+    console.error(
+      "Supabase announcement error:",
+      error
+    );
+
+    const list =
+      document.getElementById("announcementList");
 
     if (list) {
       list.innerHTML = `
@@ -40,6 +47,11 @@ async function loadAnnouncements() {
 
     return;
   }
+
+  console.log(
+    "Announcements received:",
+    data
+  );
 
   renderAnnouncements(data || []);
 }
@@ -55,7 +67,9 @@ function renderAnnouncements(data) {
     document.getElementById("announcementList");
 
   if (!list) {
-    console.error("announcementList was not found.");
+    console.error(
+      "announcementList was not found in index.html"
+    );
     return;
   }
 
@@ -79,43 +93,52 @@ function renderAnnouncements(data) {
       : "all";
 
 
-  const filtered = data.filter(item => {
+  const filtered =
+    data.filter(item => {
 
-    const title =
-      item.title || "";
+      const title =
+        item.title || "";
 
-    const message =
-      item.message || "";
+      const message =
+        item.message || "";
 
-    const itemCategory =
-      item.category || "important";
-
-
-    const matchesSearch =
-      (title + " " + message)
-        .toLowerCase()
-        .includes(search);
+      const itemCategory =
+        item.category || "important";
 
 
-    const matchesCategory =
-      category === "all" ||
-      itemCategory === category;
+      const matchesSearch =
+        (title + " " + message)
+          .toLowerCase()
+          .includes(search);
 
 
-    return matchesSearch && matchesCategory;
-  });
+      const matchesCategory =
+        category === "all" ||
+        itemCategory === category;
+
+
+      return (
+        matchesSearch &&
+        matchesCategory
+      );
+
+    });
 
 
   list.innerHTML = "";
 
 
   const noAnnouncements =
-    document.getElementById("noAnnouncements");
+    document.getElementById(
+      "noAnnouncements"
+    );
 
 
   if (noAnnouncements) {
+
     noAnnouncements.hidden =
       filtered.length > 0;
+
   }
 
 
@@ -132,18 +155,24 @@ function renderAnnouncements(data) {
 
     const date =
       item.created_at
-        ? new Date(item.created_at).toLocaleString()
+        ? new Date(
+            item.created_at
+          ).toLocaleString()
         : "";
 
 
     article.innerHTML = `
 
       <span class="tag">
-        ${escapeHTML(item.category || "Important")}
+        ${escapeHTML(
+          item.category || "Important"
+        )}
       </span>
 
       <h3>
-        ${escapeHTML(item.title || "")}
+        ${escapeHTML(
+          item.title || ""
+        )}
       </h3>
 
       <div class="date">
@@ -151,7 +180,9 @@ function renderAnnouncements(data) {
       </div>
 
       <p class="message">
-        ${escapeHTML(item.message || "")}
+        ${escapeHTML(
+          item.message || ""
+        )}
       </p>
 
       <div class="comments">
@@ -168,16 +199,15 @@ function renderAnnouncements(data) {
 
           <input
             class="commentName"
+            type="text"
             placeholder="Your name"
             maxlength="40"
-            required
           >
 
           <textarea
             class="commentText"
             placeholder="Write a comment..."
             maxlength="500"
-            required
           ></textarea>
 
           <button
@@ -190,47 +220,76 @@ function renderAnnouncements(data) {
         </div>
 
       </div>
+
     `;
 
 
     // ========================================
-    // COMMENT SUBMISSION
+    // COMMENT BUTTON
     // ========================================
 
-    article
-      .querySelector(".commentButton")
-      .addEventListener("click", async () => {
+    const commentButton =
+      article.querySelector(
+        ".commentButton"
+      );
+
+
+    commentButton.addEventListener(
+      "click",
+      async () => {
 
         const name =
           article
-            .querySelector(".commentName")
+            .querySelector(
+              ".commentName"
+            )
             .value
             .trim();
 
 
         const text =
           article
-            .querySelector(".commentText")
+            .querySelector(
+              ".commentText"
+            )
             .value
             .trim();
 
 
         if (!name || !text) {
+
           alert(
             "Please enter your name and comment."
           );
+
           return;
         }
+
+
+        commentButton.disabled =
+          true;
+
+        commentButton.textContent =
+          "Submitting...";
 
 
         const { error } =
           await supabaseClient
             .from("comments")
             .insert({
-              announcement_id: item.id,
-              name: name,
-              text: text,
-              approved: false
+
+              announcement_id:
+                item.id,
+
+              name:
+                name,
+
+              text:
+                text,
+
+              approved:
+                false
+
             });
 
 
@@ -242,28 +301,47 @@ function renderAnnouncements(data) {
           );
 
           alert(
-            "There was a problem submitting your comment."
+            "There was a problem submitting your comment: " +
+            error.message
           );
+
+          commentButton.disabled =
+            false;
+
+          commentButton.textContent =
+            "Submit Comment";
 
           return;
         }
 
 
         article
-          .querySelector(".commentName")
+          .querySelector(
+            ".commentName"
+          )
           .value = "";
 
 
         article
-          .querySelector(".commentText")
+          .querySelector(
+            ".commentText"
+          )
           .value = "";
+
+
+        commentButton.disabled =
+          false;
+
+        commentButton.textContent =
+          "Submit Comment";
 
 
         alert(
           "Comment submitted. It will appear after admin approval."
         );
 
-      });
+      }
+    );
 
 
     list.appendChild(article);
@@ -272,10 +350,13 @@ function renderAnnouncements(data) {
     // Load approved comments
     loadApprovedComments(
       item.id,
-      article.querySelector(".approvedComments")
+      article.querySelector(
+        ".approvedComments"
+      )
     );
 
   });
+
 }
 
 
@@ -292,17 +373,26 @@ async function loadApprovedComments(
     await supabaseClient
       .from("comments")
       .select("*")
-      .eq("announcement_id", announcementId)
-      .eq("approved", true)
-      .order("created_at", {
-        ascending: true
-      });
+      .eq(
+        "announcement_id",
+        announcementId
+      )
+      .eq(
+        "approved",
+        true
+      )
+      .order(
+        "created_at",
+        {
+          ascending: true
+        }
+      );
 
 
   if (error) {
 
     console.error(
-      "Error loading comments:",
+      "Comment loading error:",
       error
     );
 
@@ -329,6 +419,7 @@ async function loadApprovedComments(
     const commentDiv =
       document.createElement("div");
 
+
     commentDiv.className =
       "approved-comment";
 
@@ -336,19 +427,26 @@ async function loadApprovedComments(
     commentDiv.innerHTML = `
 
       <strong>
-        ${escapeHTML(comment.name)}
+        ${escapeHTML(
+          comment.name
+        )}
       </strong>
 
       <p>
-        ${escapeHTML(comment.text)}
+        ${escapeHTML(
+          comment.text
+        )}
       </p>
 
     `;
 
 
-    container.appendChild(commentDiv);
+    container.appendChild(
+      commentDiv
+    );
 
   });
+
 }
 
 
@@ -362,12 +460,15 @@ function escapeHTML(value) {
     /[&<>"']/g,
 
     character => ({
+
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
       "'": "&#039;"
+
     }[character])
+
   );
 
 }
@@ -378,7 +479,9 @@ function escapeHTML(value) {
 // ========================================
 
 const searchInput =
-  document.getElementById("searchInput");
+  document.getElementById(
+    "searchInput"
+  );
 
 
 if (searchInput) {
@@ -396,7 +499,9 @@ if (searchInput) {
 // ========================================
 
 const categoryFilter =
-  document.getElementById("categoryFilter");
+  document.getElementById(
+    "categoryFilter"
+  );
 
 
 if (categoryFilter) {
@@ -424,9 +529,10 @@ if (year) {
 
 }
 
-new Date(item.created_at).toLocaleString()
+
 // ========================================
 // START WEBSITE
 // ========================================
 
 loadAnnouncements();
+          
