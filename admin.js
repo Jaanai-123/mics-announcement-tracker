@@ -1,599 +1,488 @@
 const KEY = "micsAnnouncements";
 const CKEY = "micsComments";
 
-
 // DEMO ADMIN PASSWORD
 const PASS = "MICSadmin123";
 
+const $ = (id) => document.getElementById(id);
 
-const $ = id =>
-  document.getElementById(id);
 
+// -------------------------
+// STORAGE FUNCTIONS
+// -------------------------
 
 function get(key) {
-
   try {
-
-    return JSON.parse(
-      localStorage.getItem(key) || "[]"
-    );
-
+    return JSON.parse(localStorage.getItem(key) || "[]");
   } catch {
-
     return [];
-
   }
-
 }
 
 
 function save(key, data) {
-
-  localStorage.setItem(
-    key,
-    JSON.stringify(data)
-  );
-
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 
-function esc(x) {
+// -------------------------
+// SECURITY / DISPLAY HELPERS
+// -------------------------
 
-  return String(x).replace(
+function esc(value) {
+  return String(value).replace(
     /[&<>"']/g,
-
-    c => ({
-
+    (character) => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
       "'": "&#039;"
-
-    }[c])
-
+    }[character])
   );
-
 }
 
 
-function date(x) {
-
-  return new Date(x).toLocaleString(
-    [],
-    {
-      dateStyle: "medium",
-      timeStyle: "short"
-    }
-  );
-
+function formatDate(value) {
+  return new Date(value).toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
 }
 
 
-function show() {
+// -------------------------
+// LOGIN
+// -------------------------
 
+function isLoggedIn() {
+  return sessionStorage.getItem("micsAdmin") === "true";
+}
+
+
+function showDashboard() {
   $("loginSection").hidden = true;
-
   $("dashboard").hidden = false;
 
-  renderA();
-
-  renderC();
-
+  renderAnnouncements();
+  renderComments();
 }
 
 
-function loggedIn() {
+$("loginForm").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-  return (
-    sessionStorage.getItem(
-      "micsAdmin"
-    ) === "true"
-  );
+  const password = $("adminPassword").value;
 
-}
+  if (password === PASS) {
+    sessionStorage.setItem("micsAdmin", "true");
 
+    $("loginError").hidden = true;
 
-if (loggedIn()) {
-
-  show();
-
-}
-
-
-
-$("loginForm")
-  .addEventListener(
-    "submit",
-    e => {
-
-      e.preventDefault();
+    showDashboard();
+  } else {
+    $("loginError").hidden = false;
+    $("adminPassword").value = "";
+    $("adminPassword").focus();
+  }
+});
 
 
-      if (
-        $("adminPassword").value
-        === PASS
-      ) {
+// -------------------------
+// LOGOUT
+// -------------------------
 
-        sessionStorage.setItem(
-          "micsAdmin",
-          "true"
-        );
+$("logoutButton").addEventListener("click", function () {
+  sessionStorage.removeItem("micsAdmin");
 
-        show();
+  window.location.reload();
+});
 
-      }
 
-      else {
+// -------------------------
+// ANNOUNCEMENT FORM
+// -------------------------
 
-        $("loginError").hidden =
-          false;
+$("announcementForm").addEventListener("submit", function (event) {
+  event.preventDefault();
 
-      }
+  const announcements = get(KEY);
 
+  const editId = $("editId").value;
+
+  const title = $("title").value.trim();
+  const message = $("message").value.trim();
+  const category = $("category").value;
+
+  if (!title || !message) {
+    return;
+  }
+
+  const announcementData = {
+    title: title,
+    message: message,
+    category: category
+  };
+
+
+  // EDIT EXISTING ANNOUNCEMENT
+  if (editId) {
+    const announcement = announcements.find(
+      (item) => item.id === editId
+    );
+
+    if (announcement) {
+      announcement.title = title;
+      announcement.message = message;
+      announcement.category = category;
     }
-  );
+  }
 
 
-
-$("logoutButton")
-  .addEventListener(
-    "click",
-    () => {
-
-      sessionStorage.removeItem(
-        "micsAdmin"
-      );
-
-      location.reload();
-
-    }
-  );
+  // ADD NEW ANNOUNCEMENT
+  else {
+    announcements.unshift({
+      id: String(Date.now()),
+      title: title,
+      message: message,
+      category: category,
+      date: new Date().toISOString()
+    });
+  }
 
 
+  save(KEY, announcements);
 
-$("announcementForm")
-  .addEventListener(
-    "submit",
-    e => {
+  resetForm();
 
-      e.preventDefault();
-
-
-      let a = get(KEY);
-
-      let id =
-        $("editId").value;
+  renderAnnouncements();
+});
 
 
-      let data = {
+// -------------------------
+// RESET ANNOUNCEMENT FORM
+// -------------------------
 
-        title:
-          $("title")
-            .value
-            .trim(),
-
-        message:
-          $("message")
-            .value
-            .trim(),
-
-        category:
-          $("category")
-            .value
-
-      };
-
-
-      if (id) {
-
-        let item =
-          a.find(
-            x => x.id === id
-          );
-
-        if (item) {
-
-          Object.assign(
-            item,
-            data
-          );
-
-        }
-
-      }
-
-      else {
-
-        a.unshift({
-
-          id:
-            String(Date.now()),
-
-          ...data,
-
-          date:
-            new Date()
-              .toISOString()
-
-        });
-
-      }
-
-
-      save(KEY, a);
-
-      reset();
-
-      renderA();
-
-    }
-  );
-
-
-
-function reset() {
-
+function resetForm() {
   $("announcementForm").reset();
 
   $("editId").value = "";
 
-  $("formTitle").textContent =
-    "Add Announcement";
+  $("formTitle").textContent = "Add Announcement";
 
-  $("cancelEdit").hidden =
-    true;
-
+  $("cancelEdit").hidden = true;
 }
 
 
-
-$("cancelEdit")
-  .addEventListener(
-    "click",
-    reset
-  );
+$("cancelEdit").addEventListener("click", function () {
+  resetForm();
+});
 
 
+// -------------------------
+// DISPLAY ANNOUNCEMENTS
+// -------------------------
 
-function renderA() {
+function renderAnnouncements() {
+  const box = $("adminList");
 
-  let box =
-    $("adminList");
+  const announcements = get(KEY);
 
-  let a =
-    get(KEY);
+  if (announcements.length === 0) {
+    box.innerHTML =
+      '<p class="date">No announcements yet.</p>';
+
+    return;
+  }
 
 
-  box.innerHTML =
-    a.length
+  box.innerHTML = announcements.map((item) => `
+    <div class="item">
 
-      ?
+      <h4>
+        ${esc(item.title)}
+      </h4>
 
-      a.map(x => `
+      <small>
+        ${esc(item.category)}
+        ·
+        ${formatDate(item.date)}
+      </small>
 
-        <div class="item">
+      <p>
+        ${esc(item.message)}
+      </p>
 
-          <h4>
-            ${esc(x.title)}
-          </h4>
+      <div class="actions">
 
-          <small>
-            ${esc(x.category)}
-            ·
-            ${date(x.date)}
-          </small>
+        <button
+          type="button"
+          class="edit"
+          data-edit="${esc(item.id)}"
+        >
+          Edit
+        </button>
 
-          <p>
-            ${esc(x.message)}
-          </p>
+        <button
+          type="button"
+          class="delete"
+          data-delete="${esc(item.id)}"
+        >
+          Delete
+        </button>
 
-          <div class="actions">
+      </div>
 
-            <button
-              class="edit"
-              data-e="${x.id}"
-            >
-              Edit
-            </button>
+    </div>
+  `).join("");
 
-            <button
-              class="delete"
-              data-d="${x.id}"
-            >
-              Delete
-            </button>
 
-          </div>
+  // EDIT BUTTONS
+  box.querySelectorAll("[data-edit]").forEach((button) => {
+
+    button.addEventListener("click", function () {
+
+      const id = this.dataset.edit;
+
+      const announcement = get(KEY).find(
+        (item) => item.id === id
+      );
+
+      if (!announcement) {
+        return;
+      }
+
+      $("editId").value = announcement.id;
+
+      $("title").value = announcement.title;
+
+      $("message").value = announcement.message;
+
+      $("category").value = announcement.category;
+
+      $("formTitle").textContent =
+        "Edit Announcement";
+
+      $("cancelEdit").hidden = false;
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+
+  });
+
+
+  // DELETE BUTTONS
+  box.querySelectorAll("[data-delete]").forEach((button) => {
+
+    button.addEventListener("click", function () {
+
+      const id = this.dataset.delete;
+
+      const confirmed = confirm(
+        "Delete this announcement?"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const announcements = get(KEY).filter(
+        (item) => item.id !== id
+      );
+
+      save(KEY, announcements);
+
+
+      // Delete comments belonging to announcement
+      const comments = get(CKEY).filter(
+        (comment) => comment.announcementId !== id
+      );
+
+      save(CKEY, comments);
+
+
+      renderAnnouncements();
+      renderComments();
+    });
+
+  });
+}
+
+
+// -------------------------
+// COMMENTS
+// -------------------------
+
+function renderComments() {
+  const box = $("commentList");
+
+  const announcements = get(KEY);
+
+  const comments = get(CKEY);
+
+  if (comments.length === 0) {
+    box.innerHTML =
+      '<p class="date">No comments have been submitted.</p>';
+
+    return;
+  }
+
+
+  box.innerHTML = comments.map((comment) => {
+
+    const announcement = announcements.find(
+      (item) => item.id === comment.announcementId
+    );
+
+
+    const announcementTitle = announcement
+      ? announcement.title
+      : "Deleted announcement";
+
+
+    return `
+      <div class="item">
+
+        <h4>
+          ${esc(comment.name)}
+          —
+          ${esc(announcementTitle)}
+        </h4>
+
+        <small>
+          ${formatDate(comment.date)}
+          ·
+          ${
+            comment.approved
+              ? "Approved"
+              : "Awaiting review"
+          }
+        </small>
+
+        <p>
+          ${esc(comment.text)}
+        </p>
+
+        <div class="actions">
+
+          ${
+            comment.approved
+              ? ""
+              : `
+                <button
+                  type="button"
+                  class="approve"
+                  data-approve="${esc(comment.id)}"
+                >
+                  Approve
+                </button>
+              `
+          }
+
+          <button
+            type="button"
+            class="delete"
+            data-comment-delete="${esc(comment.id)}"
+          >
+            Delete
+          </button>
 
         </div>
 
-      `).join("")
+      </div>
+    `;
 
-      :
+  }).join("");
 
-      '<p class="date">No announcements yet.</p>';
 
+  // APPROVE COMMENTS
+  box.querySelectorAll("[data-approve]").forEach((button) => {
 
-  box
-    .querySelectorAll(
-      "[data-e]"
-    )
-    .forEach(btn => {
+    button.addEventListener("click", function () {
 
-      btn.onclick = () => {
+      const id = this.dataset.approve;
 
-        let x =
-          get(KEY)
-            .find(
-              v =>
-                v.id ===
-                btn.dataset.e
-            );
+      const comments = get(CKEY);
 
+      const comment = comments.find(
+        (item) => item.id === id
+      );
 
-        $("editId").value =
-          x.id;
-
-        $("title").value =
-          x.title;
-
-        $("message").value =
-          x.message;
-
-        $("category").value =
-          x.category;
-
-
-        $("formTitle")
-          .textContent =
-          "Edit Announcement";
-
-
-        $("cancelEdit")
-          .hidden = false;
-
-
-        scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-
-      };
-
-    });
-
-
-  box
-    .querySelectorAll(
-      "[data-d]"
-    )
-    .forEach(btn => {
-
-      btn.onclick = () => {
-
-        if (
-          confirm(
-            "Delete this announcement?"
-          )
-        ) {
-
-          save(
-            KEY,
-
-            get(KEY)
-              .filter(
-                x =>
-                  x.id !==
-                  btn.dataset.d
-              )
-          );
-
-
-          save(
-            CKEY,
-
-            get(CKEY)
-              .filter(
-                x =>
-                  x.announcementId
-                  !== btn.dataset.d
-              )
-          );
-
-
-          renderA();
-
-          renderC();
-
-        }
-
-      };
-
-    });
-
-}
-
-
-
-function renderC() {
-
-  let box =
-    $("commentList");
-
-  let a =
-    get(KEY);
-
-  let c =
-    get(CKEY);
-
-
-  box.innerHTML =
-    c.length
-
-      ?
-
-      c.map(x => {
-
-        let n =
-          a.find(
-            v =>
-              v.id ===
-              x.announcementId
-          );
-
-
-        return `
-
-          <div class="item">
-
-            <h4>
-              ${esc(x.name)}
-              —
-              ${esc(
-                n
-                  ? n.title
-                  : "Deleted announcement"
-              )}
-            </h4>
-
-            <small>
-              ${date(x.date)}
-              ·
-              ${
-                x.approved
-                  ? "Approved"
-                  : "Awaiting review"
-              }
-            </small>
-
-            <p>
-              ${esc(x.text)}
-            </p>
-
-
-            <div class="actions">
-
-              ${
-                x.approved
-                  ? ""
-
-                  :
-
-                `<button
-                  class="approve"
-                  data-a="${x.id}"
-                >
-                  Approve
-                </button>`
-              }
-
-
-              <button
-                class="delete"
-                data-c="${x.id}"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("")
-
-      :
-
-      '<p class="date">No comments have been submitted.</p>';
-
-
-  box
-    .querySelectorAll(
-      "[data-a]"
-    )
-    .forEach(btn => {
-
-      btn.onclick = () => {
-
-        let x =
-          get(CKEY);
-
-
-        let c =
-          x.find(
-            v =>
-              v.id ===
-              btn.dataset.a
-          );
-
-
-        if (c) {
-
-          c.approved =
-            true;
-
-        }
-
-
-        save(CKEY, x);
-
-        renderC();
-
-      };
-
-    });
-
-
-  box
-    .querySelectorAll(
-      "[data-c]"
-    )
-    .forEach(btn => {
-
-      btn.onclick = () => {
-
-        save(
-
-          CKEY,
-
-          get(CKEY)
-            .filter(
-              x =>
-                x.id !==
-                btn.dataset.c
-            )
-
-        );
-
-
-        renderC();
-
-      };
-
-    });
-
-}
-
-
-
-$("clearComments")
-  .addEventListener(
-    "click",
-    () => {
-
-      if (
-        confirm(
-          "Delete every comment?"
-        )
-      ) {
-
-        save(CKEY, []);
-
-        renderC();
-
+      if (comment) {
+        comment.approved = true;
       }
 
+      save(CKEY, comments);
+
+      renderComments();
+    });
+
+  });
+
+
+  // DELETE COMMENTS
+  box.querySelectorAll(
+    "[data-comment-delete]"
+  ).forEach((button) => {
+
+    button.addEventListener("click", function () {
+
+      const id = this.dataset.commentDelete;
+
+      const confirmed = confirm(
+        "Delete this comment?"
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      const comments = get(CKEY).filter(
+        (comment) => comment.id !== id
+      );
+
+      save(CKEY, comments);
+
+      renderComments();
+    });
+
+  });
+}
+
+
+// -------------------------
+// DELETE ALL COMMENTS
+// -------------------------
+
+$("clearComments").addEventListener(
+  "click",
+  function () {
+
+    const confirmed = confirm(
+      "Delete every comment?"
+    );
+
+    if (!confirmed) {
+      return;
     }
-  );
+
+    save(CKEY, []);
+
+    renderComments();
+  }
+);
+
+
+// -------------------------
+// START ADMIN PAGE
+// -------------------------
+
+if (isLoggedIn()) {
+  showDashboard();
+}
+      
