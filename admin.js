@@ -575,7 +575,7 @@ function renderC() {
     });
 
 }
-<img src="school-logo.png" alt="MICS Logo"></img>
+
 
 
 $("clearComments")
