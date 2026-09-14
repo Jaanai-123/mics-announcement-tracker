@@ -15,7 +15,14 @@ const supabaseClient = supabase.createClient(
 
 
 // ========================================
-// LOAD ANNOUNCEMENTS
+// GLOBAL ANNOUNCEMENTS DATA
+// ========================================
+
+let allAnnouncements = [];
+
+
+// ========================================
+// LOAD ANNOUNCEMENTS FROM SUPABASE
 // ========================================
 
 async function loadAnnouncements() {
@@ -24,7 +31,8 @@ async function loadAnnouncements() {
 
   const { data, error } = await supabaseClient
     .from("announcements")
-    .select("*");
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (error) {
 
@@ -53,7 +61,9 @@ async function loadAnnouncements() {
     data
   );
 
-  renderAnnouncements(data || []);
+  allAnnouncements = data || [];
+
+  renderAnnouncements(allAnnouncements);
 }
 
 
@@ -64,46 +74,69 @@ async function loadAnnouncements() {
 function renderAnnouncements(data) {
 
   const list =
-    document.getElementById("announcementList");
+    document.getElementById(
+      "announcementList"
+    );
 
   if (!list) {
+
     console.error(
       "announcementList was not found in index.html"
     );
+
     return;
   }
 
 
+  // ----------------------------------------
+  // SEARCH
+  // ----------------------------------------
+
   const searchInput =
-    document.getElementById("searchInput");
-
-  const categoryFilter =
-    document.getElementById("categoryFilter");
-
+    document.getElementById(
+      "searchInput"
+    );
 
   const search =
     searchInput
-      ? searchInput.value.toLowerCase().trim()
+      ? searchInput.value
+          .toLowerCase()
+          .trim()
       : "";
 
 
-  const category =
+  // ----------------------------------------
+  // CATEGORY FILTER
+  // ----------------------------------------
+
+  const categoryFilter =
+    document.getElementById(
+      "categoryFilter"
+    );
+
+  const selectedCategory =
     categoryFilter
       ? categoryFilter.value
+          .toLowerCase()
+          .trim()
       : "all";
 
 
+  // ----------------------------------------
+  // FILTER ANNOUNCEMENTS
+  // ----------------------------------------
+
   const filtered =
-    data.filter(item => {
+    data.filter(function (announcement) {
 
       const title =
-        item.title || "";
+        announcement.title || "";
 
       const message =
-        item.message || "";
+        announcement.message || "";
 
       const itemCategory =
-        item.category || "important";
+        announcement.category || "important";
 
 
       const matchesSearch =
@@ -113,8 +146,11 @@ function renderAnnouncements(data) {
 
 
       const matchesCategory =
-        category === "all" ||
-        itemCategory === category;
+        !selectedCategory ||
+        selectedCategory === "all" ||
+        selectedCategory === "all categories" ||
+        itemCategory.toLowerCase() ===
+          selectedCategory;
 
 
       return (
@@ -125,8 +161,16 @@ function renderAnnouncements(data) {
     });
 
 
+  // ----------------------------------------
+  // CLEAR OLD ANNOUNCEMENTS
+  // ----------------------------------------
+
   list.innerHTML = "";
 
+
+  // ----------------------------------------
+  // NO ANNOUNCEMENTS MESSAGE
+  // ----------------------------------------
 
   const noAnnouncements =
     document.getElementById(
@@ -142,36 +186,55 @@ function renderAnnouncements(data) {
   }
 
 
-  filtered.forEach(item => {
+  // ----------------------------------------
+  // DISPLAY EACH ANNOUNCEMENT
+  // ----------------------------------------
+
+  filtered.forEach(function (announcement) {
 
     const article =
-      document.createElement("article");
+      document.createElement(
+        "article"
+      );
 
 
     article.className =
       "announcement " +
-      (item.category || "important");
+      (
+        announcement.category ||
+        "important"
+      );
 
+
+    // --------------------------------------
+    // DATE
+    // --------------------------------------
 
     const date =
-      item.created_at
+      announcement.created_at
         ? new Date(
-            item.created_at
+            announcement.created_at
           ).toLocaleString()
         : "";
 
+
+    // --------------------------------------
+    // ANNOUNCEMENT HTML
+    // --------------------------------------
 
     article.innerHTML = `
 
       <span class="tag">
         ${escapeHTML(
-          item.category || "Important"
+          announcement.category ||
+          "Important"
         )}
       </span>
 
       <h3>
         ${escapeHTML(
-          item.title || ""
+          announcement.title ||
+          ""
         )}
       </h3>
 
@@ -181,7 +244,8 @@ function renderAnnouncements(data) {
 
       <p class="message">
         ${escapeHTML(
-          item.message || ""
+          announcement.message ||
+          ""
         )}
       </p>
 
@@ -224,9 +288,9 @@ function renderAnnouncements(data) {
     `;
 
 
-    // ========================================
+    // --------------------------------------
     // COMMENT BUTTON
-    // ========================================
+    // --------------------------------------
 
     const commentButton =
       article.querySelector(
@@ -236,25 +300,29 @@ function renderAnnouncements(data) {
 
     commentButton.addEventListener(
       "click",
-      async () => {
+      async function () {
+
+        const nameInput =
+          article.querySelector(
+            ".commentName"
+          );
+
+        const textInput =
+          article.querySelector(
+            ".commentText"
+          );
+
 
         const name =
-          article
-            .querySelector(
-              ".commentName"
-            )
-            .value
-            .trim();
-
+          nameInput.value.trim();
 
         const text =
-          article
-            .querySelector(
-              ".commentText"
-            )
-            .value
-            .trim();
+          textInput.value.trim();
 
+
+        // ----------------------------------
+        // VALIDATE COMMENT
+        // ----------------------------------
 
         if (!name || !text) {
 
@@ -266,6 +334,10 @@ function renderAnnouncements(data) {
         }
 
 
+        // ----------------------------------
+        // DISABLE BUTTON
+        // ----------------------------------
+
         commentButton.disabled =
           true;
 
@@ -273,13 +345,17 @@ function renderAnnouncements(data) {
           "Submitting...";
 
 
+        // ----------------------------------
+        // SEND COMMENT TO SUPABASE
+        // ----------------------------------
+
         const { error } =
           await supabaseClient
             .from("comments")
             .insert({
 
               announcement_id:
-                item.id,
+                announcement.id,
 
               name:
                 name,
@@ -292,6 +368,10 @@ function renderAnnouncements(data) {
 
             });
 
+
+        // ----------------------------------
+        // HANDLE ERROR
+        // ----------------------------------
 
         if (error) {
 
@@ -315,18 +395,13 @@ function renderAnnouncements(data) {
         }
 
 
-        article
-          .querySelector(
-            ".commentName"
-          )
-          .value = "";
+        // ----------------------------------
+        // CLEAR FORM
+        // ----------------------------------
 
+        nameInput.value = "";
 
-        article
-          .querySelector(
-            ".commentText"
-          )
-          .value = "";
+        textInput.value = "";
 
 
         commentButton.disabled =
@@ -344,18 +419,39 @@ function renderAnnouncements(data) {
     );
 
 
+    // --------------------------------------
+    // ADD ANNOUNCEMENT TO PAGE
+    // --------------------------------------
+
     list.appendChild(article);
 
 
-    // Load approved comments
+    // --------------------------------------
+    // LOAD APPROVED COMMENTS
+    // --------------------------------------
+
     loadApprovedComments(
-      item.id,
+      announcement.id,
       article.querySelector(
         ".approvedComments"
       )
     );
 
   });
+
+
+  // ----------------------------------------
+  // IF SEARCH/FILTER RETURNS NOTHING
+  // ----------------------------------------
+
+  if (
+    filtered.length === 0 &&
+    noAnnouncements
+  ) {
+
+    noAnnouncements.hidden = false;
+
+  }
 
 }
 
@@ -368,6 +464,11 @@ async function loadApprovedComments(
   announcementId,
   container
 ) {
+
+  if (!container) {
+    return;
+  }
+
 
   const { data, error } =
     await supabaseClient
@@ -389,6 +490,10 @@ async function loadApprovedComments(
       );
 
 
+  // ----------------------------------------
+  // ERROR
+  // ----------------------------------------
+
   if (error) {
 
     console.error(
@@ -402,7 +507,14 @@ async function loadApprovedComments(
   }
 
 
-  if (!data || data.length === 0) {
+  // ----------------------------------------
+  // NO COMMENTS
+  // ----------------------------------------
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
 
     container.innerHTML =
       "<p>No approved comments yet.</p>";
@@ -411,13 +523,19 @@ async function loadApprovedComments(
   }
 
 
+  // ----------------------------------------
+  // DISPLAY COMMENTS
+  // ----------------------------------------
+
   container.innerHTML = "";
 
 
-  data.forEach(comment => {
+  data.forEach(function (comment) {
 
     const commentDiv =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
 
     commentDiv.className =
@@ -458,17 +576,19 @@ function escapeHTML(value) {
 
   return String(value).replace(
     /[&<>"']/g,
+    function (character) {
 
-    character => ({
+      return {
 
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
 
-    }[character])
+      }[character];
 
+    }
   );
 
 }
@@ -488,7 +608,13 @@ if (searchInput) {
 
   searchInput.addEventListener(
     "input",
-    loadAnnouncements
+    function () {
+
+      renderAnnouncements(
+        allAnnouncements
+      );
+
+    }
   );
 
 }
@@ -508,7 +634,13 @@ if (categoryFilter) {
 
   categoryFilter.addEventListener(
     "change",
-    loadAnnouncements
+    function () {
+
+      renderAnnouncements(
+        allAnnouncements
+      );
+
+    }
   );
 
 }
@@ -519,7 +651,9 @@ if (categoryFilter) {
 // ========================================
 
 const year =
-  document.getElementById("year");
+  document.getElementById(
+    "year"
+  );
 
 
 if (year) {
@@ -535,4 +669,4 @@ if (year) {
 // ========================================
 
 loadAnnouncements();
-          
+
