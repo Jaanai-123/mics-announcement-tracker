@@ -3,16 +3,21 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>MICS Admin Area</title>
+    <title>
+        MICS Admin
+    </title>
 
-<link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
@@ -20,279 +25,326 @@
 <body>
 
 
-<header>
+<!-- =====================================
+     HEADER
+===================================== -->
 
-<div class="brand">
+<header class="site-header">
 
-<img
-  src="school-logo.png"
-  alt="MICS Logo"
->
+    <div class="header-container">
 
-<div>
+        <div class="school-brand">
 
-<h1>
-Morgan International Community School
-</h1>
+            <img
+                src="school-logo.png"
+                alt="MICS Logo"
+                class="school-logo"
+            >
 
-<p>
-Admin Area
-</p>
+            <div>
 
-</div>
+                <h1>
+                    Morgan International Community School
+                </h1>
 
-</div>
+                <p>
+                    Administration
+                </p>
+
+            </div>
+
+        </div>
 
 
-<nav>
+        <a
+            href="index.html"
+            class="admin-link"
+        >
+            Public Site
+        </a>
 
-<a href="index.html">
-Public Site
-</a>
-
-</nav>
+    </div>
 
 </header>
 
 
 
-<main class="admin">
-
-
-<section
-  id="loginSection"
-  class="card"
->
-
-<span>
-SECURE AREA
-</span>
-
-<h2>
-Admin Login
-</h2>
-
-
-<form id="loginForm">
-
-<label>
-
-
-<input
-  <input
-  id="adminEmail"
-  type="email"
-  placeholder="Admin email"
-  required
->
-
-<input
-  id="adminPassword"
-  type="password"
-  placeholder="Password"
-  required
->
-
-
-</label>
-
-
-<button class="btn gold">
-Sign In
-</button>
-
-
-<p
-  id="loginError"
-  class="error"
-  hidden
->
-Incorrect password.
-</p>
-
-
-</form>
-
-</section>
-
-
+<!-- =====================================
+     LOGIN
+===================================== -->
 
 <section
-  id="dashboard"
-  hidden
+    id="loginSection"
+    class="admin-login"
 >
 
+    <div class="login-card">
 
-<div class="heading">
+        <h2>
+            Admin Login
+        </h2>
 
-<div>
-
-<span>
-DASHBOARD
-</span>
-
-<h2>
-Manage School Updates
-</h2>
-
-</div>
+        <p>
+            Sign in to manage school announcements
+            and comments.
+        </p>
 
 
-<button
-  id="logoutButton"
-  class="btn black"
->
-Log Out
-</button>
+        <form id="loginForm">
 
-</div>
+            <label for="adminEmail">
+                Email
+            </label>
 
-
-
-<div class="adminGrid">
-
-
-<section class="card">
+            <input
+                id="adminEmail"
+                type="email"
+                placeholder="Admin email"
+                required
+            >
 
 
-<h3 id="formTitle">
-Add Announcement
-</h3>
+            <label for="adminPassword">
+                Password
+            </label>
+
+            <input
+                id="adminPassword"
+                type="password"
+                placeholder="Password"
+                required
+            >
 
 
-<form id="announcementForm">
+            <button
+                type="submit"
+                class="btn gold"
+            >
+                Login
+            </button>
+
+        </form>
 
 
-<input
-  id="editId"
-  type="hidden"
->
+        <p
+            id="loginError"
+            class="error-message"
+        ></p>
 
-
-<label>
-
-Title
-
-<input
-  id="title"
-  maxlength="100"
-  required
->
-
-</label>
-
-
-<label>
-
-Message
-
-<textarea
-  id="message"
-  maxlength="1000"
-  rows="6"
-  required
-></textarea>
-
-</label>
-
-
-<label>
-
-Category
-
-<select id="category">
-
-<option value="important">
-Important
-</option>
-
-<option value="academic">
-Academic
-</option>
-
-<option value="sports">
-Sports
-</option>
-
-<option value="events">
-Events
-</option>
-
-</select>
-
-</label>
-
-
-<button class="btn gold">
-Save Announcement
-</button>
-
-
-<button
-  id="cancelEdit"
-  class="btn outline"
-  type="button"
-  hidden
->
-Cancel Edit
-</button>
-
-
-</form>
+    </div>
 
 </section>
 
 
 
-<section class="card">
+<!-- =====================================
+     ADMIN PANEL
+===================================== -->
 
-<h3>
-Announcements
-</h3>
-
-<div id="adminList"></div>
-
-</section>
-
-
-</div>
-
-
-
-<section class="card">
-
-
-<div class="heading">
-
-<h3>
-Comments Awaiting Review
-</h3>
-
-
-<button
-  id="clearComments"
-  class="btn outline"
+<section
+    id="adminPanel"
+    class="admin-panel"
+    style="display: none;"
 >
-Delete All Comments
-</button>
 
-</div>
+    <div class="container">
 
 
-<div id="commentList"></div>
+        <!-- =================================
+             ADMIN TOP BAR
+        ================================== -->
 
+        <div class="admin-top">
+
+            <div>
+
+                <h2>
+                    Admin Dashboard
+                </h2>
+
+                <p>
+                    Manage announcements and comments.
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="logout()"
+                class="btn dark"
+            >
+                Logout
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================
+             ADD ANNOUNCEMENT
+        ================================== -->
+
+        <section class="admin-card">
+
+            <h2>
+                Add Announcement
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="announcementTitle">
+                    Title
+                </label>
+
+                <input
+                    id="announcementTitle"
+                    type="text"
+                    placeholder="Announcement title"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="announcementMessage">
+                    Message
+                </label>
+
+                <textarea
+                    id="announcementMessage"
+                    placeholder="Write your announcement..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="announcementCategory">
+                    Category
+                </label>
+
+                <select
+                    id="announcementCategory"
+                >
+
+                    <option value="important">
+                        Important
+                    </option>
+
+                    <option value="academic">
+                        Academic
+                    </option>
+
+                    <option value="event">
+                        Event
+                    </option>
+
+                    <option value="sports">
+                        Sports
+                    </option>
+
+                    <option value="general">
+                        General
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                onclick="addAnnouncement()"
+                class="btn gold"
+            >
+                Add Announcement
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================
+             ANNOUNCEMENT MANAGEMENT
+        ================================== -->
+
+        <section class="admin-card">
+
+            <h2>
+                Manage Announcements
+            </h2>
+
+            <div
+                id="announcementList"
+                class="admin-list"
+            >
+                Loading announcements...
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             COMMENT MANAGEMENT
+        ================================== -->
+
+        <section class="admin-card">
+
+            <h2>
+                Manage Comments
+            </h2>
+
+            <p class="admin-description">
+                Approve comments before they appear
+                publicly.
+            </p>
+
+
+            <div
+                id="commentList"
+                class="admin-list"
+            >
+                Loading comments...
+            </div>
+
+        </section>
+
+    </div>
 
 </section>
 
 
-</section>
+
+<!-- =====================================
+     FOOTER
+===================================== -->
+
+<footer class="site-footer">
+
+    <div class="container">
+
+        <p>
+            Morgan International Community School
+        </p>
+
+    </div>
+
+</footer>
 
 
-</main>
 
+<!-- =====================================
+     SUPABASE
+===================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
 <script src="admin.js"></script>
-</body>
 
+</body>
 </html>
