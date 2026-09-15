@@ -945,7 +945,23 @@ select {
         align-items: flex-start;
     }
 
+/* GOLD HIGHLIGHT FOR ADMIN AND PUBLIC SITE */
 
+a.admin-link {
+    display: inline-block !important;
+    background: #f4c430 !important;
+    color: #111 !important;
+    border: 2px solid #f4c430 !important;
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+}
+
+a.admin-link:hover {
+    background: #ffffff !important;
+    color: #006b3c !important;
+}
     .admin-top .btn {
         width: 100%;
     }
