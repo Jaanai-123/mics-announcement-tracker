@@ -1,284 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>MICS Admin</title>
-
-    <link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#004f2c">
+  <title>MICS Admin Area</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body>
+<body class="admin-page">
 
-<header class="site-header">
-
-    <div class="header-container">
-
-        <div class="school-brand">
-
-            <img
-                src="school-logo.png"
-                alt="MICS logo"
-                class="school-logo"
-            >
-
-            <div>
-
-                <h1>
-                    Morgan International Community School
-                </h1>
-
-                <p>
-                    Administration
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <a
-            href="index.html"
-            class="admin-link"
-        >
-            Public Site
-        </a>
-
+  <header class="admin-header">
+    <div class="brand">
+      <img src="school-logo.png" alt="MICS Logo">
+      <div>
+        <h1>Morgan International Community School</h1>
+        <p>Administration Portal</p>
+      </div>
     </div>
 
-</header>
+    <nav>
+      <a href="index.html">← Public Site</a>
+    </nav>
+  </header>
 
+  <main class="admin">
 
-<section
-    id="loginSection"
-    class="admin-login"
->
+    <section id="loginSection" class="login-shell">
+      <div class="login-card card">
 
-    <div class="login-card">
+        <div class="login-brand">
+          <div class="login-logo">
+            <img src="school-logo.png" alt="Morgan International Community School logo">
+          </div>
 
-        <h2>Admin Login</h2>
+          <span class="security-badge">
+            <span class="status-dot"></span>
+            SECURE STAFF AREA
+          </span>
 
-        <p>
-            Sign in to manage announcements and comments.
-        </p>
+          <h2>Welcome back</h2>
+          <p class="login-subtitle">
+            Sign in to manage school announcements and review comments.
+          </p>
+        </div>
 
+        <form id="loginForm" class="login-form">
 
-        <form id="loginForm">
+          <label for="adminEmail">
+            <span>Email address</span>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">✉</span>
+              <input id="adminEmail" type="email" placeholder="admin@mics.edu"
+                     autocomplete="username" required>
+            </div>
+          </label>
 
-            <label for="adminEmail">
-                Email
-            </label>
+          <label for="adminPassword">
+            <span>Password</span>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">••</span>
+              <input id="adminPassword" type="password" placeholder="Enter your password"
+                     autocomplete="current-password" required>
+            </div>
+          </label>
 
-            <input
-                id="adminEmail"
-                type="email"
-                placeholder="Admin email"
-                required
-            >
+          <button class="btn gold login-button" type="submit">
+            Sign In <span aria-hidden="true">→</span>
+          </button>
 
-
-            <label for="adminPassword">
-                Password
-            </label>
-
-            <input
-                id="adminPassword"
-                type="password"
-                placeholder="Password"
-                required
-            >
-
-
-            <button
-                type="submit"
-                class="btn gold"
-            >
-                Login
-            </button>
-
+          <p id="loginError" class="error" role="alert"></p>
         </form>
 
+        <div class="login-footer">
+          <span aria-hidden="true">🔒</span>
+          <span>Authorized MICS administrators only</span>
+        </div>
+      </div>
+    </section>
 
-        <p
-            id="loginError"
-            class="error-message"
-        ></p>
+    <section id="adminPanel" hidden>
 
-    </div>
-
-</section>
-
-
-<section
-    id="adminPanel"
-    class="admin-panel"
-    style="display: none;"
->
-
-    <div class="container">
-
-        <div class="admin-top">
-
-            <div>
-
-                <h2>Admin Dashboard</h2>
-
-                <p>
-                    Manage announcements and comments.
-                </p>
-
-            </div>
-
-
-            <button
-                id="logoutButton"
-                class="btn dark"
-            >
-                Logout
-            </button>
-
+      <div class="heading dashboard-heading">
+        <div>
+          <span>DASHBOARD</span>
+          <h2>Manage School Updates</h2>
+          <p class="dashboard-subtitle">
+            Publish announcements and moderate community comments.
+          </p>
         </div>
 
+        <button id="logoutButton" class="btn black logout-button" type="button">
+          Log Out
+        </button>
+      </div>
 
-        <section class="admin-card">
+      <div class="adminGrid">
 
-            <h2>Add Announcement</h2>
-
-
-            <div class="form-group">
-
-                <label for="announcementTitle">
-                    Title
-                </label>
-
-                <input
-                    id="announcementTitle"
-                    type="text"
-                    placeholder="Announcement title"
-                    maxlength="150"
-                >
-
+        <section class="card admin-form-card">
+          <div class="card-heading">
+            <div class="card-icon">＋</div>
+            <div>
+              <p class="card-kicker">CONTENT</p>
+              <h3 id="formTitle">Add Announcement</h3>
             </div>
+          </div>
 
+          <form id="announcementForm" onsubmit="return false;">
+            <input id="editId" type="hidden">
 
-            <div class="form-group">
+            <label for="announcementTitle">
+              Title
+              <input id="announcementTitle" maxlength="100"
+                     placeholder="Announcement title" required>
+            </label>
 
-                <label for="announcementMessage">
-                    Message
-                </label>
+            <label for="announcementMessage">
+              Message
+              <textarea id="announcementMessage" maxlength="1000" rows="6"
+                        placeholder="Write the announcement..." required></textarea>
+            </label>
 
-                <textarea
-                    id="announcementMessage"
-                    placeholder="Write your announcement..."
-                    maxlength="5000"
-                ></textarea>
+            <label for="announcementCategory">
+              Category
+              <select id="announcementCategory">
+                <option value="important">Important</option>
+                <option value="academic">Academic</option>
+                <option value="sports">Sports</option>
+                <option value="events">Events</option>
+              </select>
+            </label>
 
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="announcementCategory">
-                    Category
-                </label>
-
-                <select id="announcementCategory">
-
-                    <option value="important">
-                        Important
-                    </option>
-
-                    <option value="academic">
-                        Academic
-                    </option>
-
-                    <option value="event">
-                        Event
-                    </option>
-
-                    <option value="sports">
-                        Sports
-                    </option>
-
-                    <option value="general">
-                        General
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <button
-                id="addAnnouncementButton"
-                class="btn gold"
-            >
-                Add Announcement
+            <button id="addAnnouncementButton" type="button" class="btn gold save-button">
+              Save Announcement
             </button>
-
+          </form>
         </section>
 
-
-        <section class="admin-card">
-
-            <h2>Manage Announcements</h2>
-
-            <div
-                id="announcementList"
-                class="admin-list"
-            >
-                Loading announcements...
+        <section class="card">
+          <div class="card-heading">
+            <div class="card-icon">☰</div>
+            <div>
+              <p class="card-kicker">PUBLISHED CONTENT</p>
+              <h3>Announcements</h3>
             </div>
+          </div>
 
+          <div id="announcementList"></div>
         </section>
 
+      </div>
 
-        <section class="admin-card">
-
-            <h2>Manage Comments</h2>
-
-            <p class="admin-description">
-                Approve comments before they appear publicly.
-            </p>
-
-            <div
-                id="commentList"
-                class="admin-list"
-            >
-                Loading comments...
+      <section class="card comments-card">
+        <div class="heading">
+          <div class="card-heading">
+            <div class="card-icon">💬</div>
+            <div>
+              <p class="card-kicker">MODERATION</p>
+              <h3>Comments Awaiting Review</h3>
             </div>
+          </div>
+        </div>
 
-        </section>
+        <div id="commentList"></div>
+      </section>
 
-    </div>
+    </section>
+  </main>
 
-</section>
-
-
-<footer class="site-footer">
-
-    <div class="container">
-
-        <p>
-            Morgan International Community School
-        </p>
-
-    </div>
-
-</footer>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="admin.js"></script>
-
+  <script src="admin1.js"></script>
 </body>
 </html>
