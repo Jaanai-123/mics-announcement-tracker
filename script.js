@@ -1,457 +1,483 @@
 // ========================================
-// SUPABASE CONNECTION
+// SUPABASE
 // ========================================
 
 const SUPABASE_URL =
-  "https://twbpewwzclktdkavrrgy.supabase.co";
+    "https://twbpewwzclktdkavrrgy.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_oj9LKr__BayRnwrEzBMgcw_C5g2zc5c";
+    "sb_publishable_oj9LKr__BayRnwrEzBMgcw_C5g2zc5c";
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 // ========================================
-// GLOBAL ANNOUNCEMENTS DATA
+// DATA
 // ========================================
 
 let allAnnouncements = [];
 
 
 // ========================================
-// LOAD ANNOUNCEMENTS FROM SUPABASE
+// PAGE READY
+// ========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        setupSearch();
+
+        setupCategoryFilter();
+
+        setupYear();
+
+        loadAnnouncements();
+
+    }
+);
+
+
+// ========================================
+// LOAD ANNOUNCEMENTS
 // ========================================
 
 async function loadAnnouncements() {
 
-  console.log("Loading announcements...");
-
-  const { data, error } = await supabaseClient
-    .from("announcements")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-
-    console.error(
-      "Supabase announcement error:",
-      error
+    console.log(
+        "Loading announcements..."
     );
 
-    const list =
-      document.getElementById("announcementList");
 
-    if (list) {
-      list.innerHTML = `
-        <p>
-          Unable to load announcements.
-          Please try again later.
-        </p>
-      `;
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("announcements")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+            "SUPABASE ANNOUNCEMENT ERROR:",
+            error
+        );
+
+
+        showError(
+            "Could not load announcements. " +
+            error.message
+        );
+
+
+        return;
     }
 
-    return;
-  }
 
-  console.log(
-    "Announcements received:",
-    data
-  );
+    console.log(
+        "Announcements:",
+        data
+    );
 
-  allAnnouncements = data || [];
 
-  renderAnnouncements(allAnnouncements);
+    allAnnouncements =
+        data || [];
+
+
+    renderAnnouncements();
+
 }
 
 
 // ========================================
-// DISPLAY ANNOUNCEMENTS
+// RENDER
 // ========================================
 
-function renderAnnouncements(data) {
+function renderAnnouncements() {
 
-  const list =
-    document.getElementById(
-      "announcementList"
+    const list =
+        document.getElementById(
+            "announcementList"
+        );
+
+
+    if (!list) {
+
+        console.error(
+            "announcementList not found."
+        );
+
+        return;
+    }
+
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const categoryFilter =
+        document.getElementById(
+            "categoryFilter"
+        );
+
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+            : "";
+
+
+    const selectedCategory =
+        categoryFilter
+            ? categoryFilter.value
+                .toLowerCase()
+                .trim()
+            : "all";
+
+
+    const filtered =
+        allAnnouncements.filter(
+            function (announcement) {
+
+                const title =
+                    (
+                        announcement.title ||
+                        ""
+                    )
+                    .toLowerCase();
+
+
+                const message =
+                    (
+                        announcement.message ||
+                        ""
+                    )
+                    .toLowerCase();
+
+
+                const category =
+                    (
+                        announcement.category ||
+                        "important"
+                    )
+                    .toLowerCase()
+                    .trim();
+
+
+                const matchesSearch =
+                    (
+                        title +
+                        " " +
+                        message
+                    )
+                    .includes(search);
+
+
+                const matchesCategory =
+                    selectedCategory === "" ||
+                    selectedCategory === "all" ||
+                    selectedCategory === "all categories" ||
+                    category === selectedCategory;
+
+
+                return (
+                    matchesSearch &&
+                    matchesCategory
+                );
+
+            }
+        );
+
+
+    list.innerHTML = "";
+
+
+    const noAnnouncements =
+        document.getElementById(
+            "noAnnouncements"
+        );
+
+
+    if (filtered.length === 0) {
+
+        if (noAnnouncements) {
+            noAnnouncements.hidden = false;
+        }
+
+        return;
+    }
+
+
+    if (noAnnouncements) {
+        noAnnouncements.hidden = true;
+    }
+
+
+    filtered.forEach(
+        function (announcement) {
+
+            createAnnouncementCard(
+                announcement,
+                list
+            );
+
+        }
     );
 
-  if (!list) {
-
-    console.error(
-      "announcementList was not found in index.html"
-    );
-
-    return;
-  }
+}
 
 
-  // ----------------------------------------
-  // SEARCH
-  // ----------------------------------------
+// ========================================
+// CREATE ANNOUNCEMENT CARD
+// ========================================
 
-  const searchInput =
-    document.getElementById(
-      "searchInput"
-    );
-
-  const search =
-    searchInput
-      ? searchInput.value
-          .toLowerCase()
-          .trim()
-      : "";
-
-
-  // ----------------------------------------
-  // CATEGORY FILTER
-  // ----------------------------------------
-
-  const categoryFilter =
-    document.getElementById(
-      "categoryFilter"
-    );
-
-  const selectedCategory =
-    categoryFilter
-      ? categoryFilter.value
-          .toLowerCase()
-          .trim()
-      : "all";
-
-
-  // ----------------------------------------
-  // FILTER ANNOUNCEMENTS
-  // ----------------------------------------
-
-  const filtered =
-    data.filter(function (announcement) {
-
-      const title =
-        announcement.title || "";
-
-      const message =
-        announcement.message || "";
-
-      const itemCategory =
-        announcement.category || "important";
-
-
-      const matchesSearch =
-        (title + " " + message)
-          .toLowerCase()
-          .includes(search);
-
-
-      const matchesCategory =
-        !selectedCategory ||
-        selectedCategory === "all" ||
-        selectedCategory === "all categories" ||
-        itemCategory.toLowerCase() ===
-          selectedCategory;
-
-
-      return (
-        matchesSearch &&
-        matchesCategory
-      );
-
-    });
-
-
-  // ----------------------------------------
-  // CLEAR OLD ANNOUNCEMENTS
-  // ----------------------------------------
-
-  list.innerHTML = "";
-
-
-  // ----------------------------------------
-  // NO ANNOUNCEMENTS MESSAGE
-  // ----------------------------------------
-
-  const noAnnouncements =
-    document.getElementById(
-      "noAnnouncements"
-    );
-
-
-  if (noAnnouncements) {
-
-    noAnnouncements.hidden =
-      filtered.length > 0;
-
-  }
-
-
-  // ----------------------------------------
-  // DISPLAY EACH ANNOUNCEMENT
-  // ----------------------------------------
-
-  filtered.forEach(function (announcement) {
+function createAnnouncementCard(
+    announcement,
+    list
+) {
 
     const article =
-      document.createElement(
-        "article"
-      );
+        document.createElement(
+            "article"
+        );
+
+
+    const category =
+        announcement.category ||
+        "important";
 
 
     article.className =
-      "announcement " +
-      (
-        announcement.category ||
-        "important"
-      );
+        "announcement " +
+        category;
 
-
-    // --------------------------------------
-    // DATE
-    // --------------------------------------
 
     const date =
-      announcement.created_at
-        ? new Date(
-            announcement.created_at
-          ).toLocaleString()
-        : "";
+        announcement.created_at
+            ? new Date(
+                announcement.created_at
+            ).toLocaleString()
+            : "";
 
-
-    // --------------------------------------
-    // ANNOUNCEMENT HTML
-    // --------------------------------------
 
     article.innerHTML = `
 
-      <span class="tag">
-        ${escapeHTML(
-          announcement.category ||
-          "Important"
-        )}
-      </span>
+        <span class="tag">
+            ${escapeHTML(category)}
+        </span>
 
-      <h3>
-        ${escapeHTML(
-          announcement.title ||
-          ""
-        )}
-      </h3>
+        <h3>
+            ${escapeHTML(
+                announcement.title || ""
+            )}
+        </h3>
 
-      <div class="date">
-        ${escapeHTML(date)}
-      </div>
-
-      <p class="message">
-        ${escapeHTML(
-          announcement.message ||
-          ""
-        )}
-      </p>
-
-      <div class="comments">
-
-        <h4>
-          💬 Comments
-        </h4>
-
-        <div class="approvedComments">
-          <p>Loading comments...</p>
+        <div class="date">
+            ${escapeHTML(date)}
         </div>
 
-        <div class="commentForm">
+        <p class="message">
+            ${escapeHTML(
+                announcement.message || ""
+            )}
+        </p>
 
-          <input
-            class="commentName"
-            type="text"
-            placeholder="Your name"
-            maxlength="40"
-          >
+        <div class="comments">
 
-          <textarea
-            class="commentText"
-            placeholder="Write a comment..."
-            maxlength="500"
-          ></textarea>
+            <h4>
+                💬 Comments
+            </h4>
 
-          <button
-            type="button"
-            class="btn gold commentButton"
-          >
-            Submit Comment
-          </button>
+            <div class="approvedComments">
+                Loading comments...
+            </div>
+
+            <div class="commentForm">
+
+                <input
+                    class="commentName"
+                    type="text"
+                    placeholder="Your name"
+                    maxlength="40"
+                >
+
+                <textarea
+                    class="commentText"
+                    placeholder="Write a comment..."
+                    maxlength="500"
+                ></textarea>
+
+                <button
+                    type="button"
+                    class="btn gold commentButton"
+                >
+                    Submit Comment
+                </button>
+
+            </div>
 
         </div>
-
-      </div>
 
     `;
 
 
-    // --------------------------------------
-    // COMMENT BUTTON
-    // --------------------------------------
-
-    const commentButton =
-      article.querySelector(
-        ".commentButton"
-      );
+    const button =
+        article.querySelector(
+            ".commentButton"
+        );
 
 
-    commentButton.addEventListener(
-      "click",
-      async function () {
+    button.addEventListener(
+        "click",
+        function () {
 
-        const nameInput =
-          article.querySelector(
-            ".commentName"
-          );
+            submitComment(
+                announcement.id,
+                article,
+                button
+            );
 
-        const textInput =
-          article.querySelector(
-            ".commentText"
-          );
-
-
-        const name =
-          nameInput.value.trim();
-
-        const text =
-          textInput.value.trim();
-
-
-        // ----------------------------------
-        // VALIDATE COMMENT
-        // ----------------------------------
-
-        if (!name || !text) {
-
-          alert(
-            "Please enter your name and comment."
-          );
-
-          return;
         }
+    );
 
 
-        // ----------------------------------
-        // DISABLE BUTTON
-        // ----------------------------------
-
-        commentButton.disabled =
-          true;
-
-        commentButton.textContent =
-          "Submitting...";
+    list.appendChild(
+        article
+    );
 
 
-        // ----------------------------------
-        // SEND COMMENT TO SUPABASE
-        // ----------------------------------
+    loadApprovedComments(
+        announcement.id,
+        article.querySelector(
+            ".approvedComments"
+        )
+    );
 
-        const { error } =
-          await supabaseClient
+}
+
+
+// ========================================
+// SUBMIT COMMENT
+// ========================================
+
+async function submitComment(
+    announcementId,
+    article,
+    button
+) {
+
+    const nameInput =
+        article.querySelector(
+            ".commentName"
+        );
+
+
+    const textInput =
+        article.querySelector(
+            ".commentText"
+        );
+
+
+    const name =
+        nameInput.value.trim();
+
+
+    const text =
+        textInput.value.trim();
+
+
+    if (!name || !text) {
+
+        alert(
+            "Please enter your name and comment."
+        );
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Submitting...";
+
+
+    const {
+        error
+    } =
+        await supabaseClient
             .from("comments")
             .insert({
 
-              announcement_id:
-                announcement.id,
+                announcement_id:
+                    announcementId,
 
-              name:
-                name,
+                name:
+                    name,
 
-              text:
-                text,
+                text:
+                    text,
 
-              approved:
-                false
+                approved:
+                    false
 
             });
 
 
-        // ----------------------------------
-        // HANDLE ERROR
-        // ----------------------------------
+    if (error) {
 
-        if (error) {
-
-          console.error(
-            "Comment error:",
+        console.error(
+            "COMMENT ERROR:",
             error
-          );
-
-          alert(
-            "There was a problem submitting your comment: " +
-            error.message
-          );
-
-          commentButton.disabled =
-            false;
-
-          commentButton.textContent =
-            "Submit Comment";
-
-          return;
-        }
-
-
-        // ----------------------------------
-        // CLEAR FORM
-        // ----------------------------------
-
-        nameInput.value = "";
-
-        textInput.value = "";
-
-
-        commentButton.disabled =
-          false;
-
-        commentButton.textContent =
-          "Submit Comment";
+        );
 
 
         alert(
-          "Comment submitted. It will appear after admin approval."
+            "Could not submit comment: " +
+            error.message
         );
 
-      }
+
+        button.disabled = false;
+
+        button.textContent =
+            "Submit Comment";
+
+        return;
+    }
+
+
+    nameInput.value = "";
+
+    textInput.value = "";
+
+
+    button.disabled = false;
+
+    button.textContent =
+        "Submit Comment";
+
+
+    alert(
+        "Comment submitted. It will appear after admin approval."
     );
-
-
-    // --------------------------------------
-    // ADD ANNOUNCEMENT TO PAGE
-    // --------------------------------------
-
-    list.appendChild(article);
-
-
-    // --------------------------------------
-    // LOAD APPROVED COMMENTS
-    // --------------------------------------
-
-    loadApprovedComments(
-      announcement.id,
-      article.querySelector(
-        ".approvedComments"
-      )
-    );
-
-  });
-
-
-  // ----------------------------------------
-  // IF SEARCH/FILTER RETURNS NOTHING
-  // ----------------------------------------
-
-  if (
-    filtered.length === 0 &&
-    noAnnouncements
-  ) {
-
-    noAnnouncements.hidden = false;
-
-  }
 
 }
 
@@ -461,109 +487,221 @@ function renderAnnouncements(data) {
 // ========================================
 
 async function loadApprovedComments(
-  announcementId,
-  container
+    announcementId,
+    container
 ) {
 
-  if (!container) {
-    return;
-  }
+    if (!container) {
+        return;
+    }
 
 
-  const { data, error } =
-    await supabaseClient
-      .from("comments")
-      .select("*")
-      .eq(
-        "announcement_id",
-        announcementId
-      )
-      .eq(
-        "approved",
-        true
-      )
-      .order(
-        "created_at",
-        {
-          ascending: true
-        }
-      );
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("comments")
+            .select("*")
+            .eq(
+                "announcement_id",
+                announcementId
+            )
+            .eq(
+                "approved",
+                true
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: true
+                }
+            );
 
 
-  // ----------------------------------------
-  // ERROR
-  // ----------------------------------------
+    if (error) {
 
-  if (error) {
+        console.error(
+            "COMMENT LOAD ERROR:",
+            error
+        );
 
-    console.error(
-      "Comment loading error:",
-      error
-    );
+
+        container.innerHTML =
+            "";
+
+
+        return;
+    }
+
+
+    if (
+        !data ||
+        data.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No approved comments yet.</p>";
+
+        return;
+    }
+
 
     container.innerHTML = "";
 
-    return;
-  }
+
+    data.forEach(
+        function (comment) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
 
 
-  // ----------------------------------------
-  // NO COMMENTS
-  // ----------------------------------------
-
-  if (
-    !data ||
-    data.length === 0
-  ) {
-
-    container.innerHTML =
-      "<p>No approved comments yet.</p>";
-
-    return;
-  }
+            div.className =
+                "approved-comment";
 
 
-  // ----------------------------------------
-  // DISPLAY COMMENTS
-  // ----------------------------------------
+            div.innerHTML = `
 
-  container.innerHTML = "";
+                <strong>
+                    ${escapeHTML(
+                        comment.name
+                    )}
+                </strong>
 
+                <p>
+                    ${escapeHTML(
+                        comment.text
+                    )}
+                </p>
 
-  data.forEach(function (comment) {
-
-    const commentDiv =
-      document.createElement(
-        "div"
-      );
-
-
-    commentDiv.className =
-      "approved-comment";
+            `;
 
 
-    commentDiv.innerHTML = `
+            container.appendChild(
+                div
+            );
 
-      <strong>
-        ${escapeHTML(
-          comment.name
-        )}
-      </strong>
-
-      <p>
-        ${escapeHTML(
-          comment.text
-        )}
-      </p>
-
-    `;
-
-
-    container.appendChild(
-      commentDiv
+        }
     );
 
-  });
+}
+
+
+// ========================================
+// SEARCH
+// ========================================
+
+function setupSearch() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            renderAnnouncements();
+
+        }
+    );
+
+}
+
+
+// ========================================
+// CATEGORY FILTER
+// ========================================
+
+function setupCategoryFilter() {
+
+    const filter =
+        document.getElementById(
+            "categoryFilter"
+        );
+
+
+    if (!filter) {
+        return;
+    }
+
+
+    filter.addEventListener(
+        "change",
+        function () {
+
+            renderAnnouncements();
+
+        }
+    );
+
+}
+
+
+// ========================================
+// YEAR
+// ========================================
+
+function setupYear() {
+
+    const year =
+        document.getElementById(
+            "year"
+        );
+
+
+    if (year) {
+
+        year.textContent =
+            new Date().getFullYear();
+
+    }
+
+}
+
+
+// ========================================
+// ERROR MESSAGE
+// ========================================
+
+function showError(message) {
+
+    const list =
+        document.getElementById(
+            "announcementList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    list.innerHTML = `
+
+        <div class="empty-message">
+
+            <h3>
+                Unable to load announcements
+            </h3>
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+        </div>
+
+    `;
 
 }
 
@@ -574,99 +712,21 @@ async function loadApprovedComments(
 
 function escapeHTML(value) {
 
-  return String(value).replace(
-    /[&<>"']/g,
-    function (character) {
+    return String(value).replace(
+        /[&<>"']/g,
+        function (character) {
 
-      return {
+            return {
 
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
 
-      }[character];
+            }[character];
 
-    }
-  );
-
-}
-
-
-// ========================================
-// SEARCH
-// ========================================
-
-const searchInput =
-  document.getElementById(
-    "searchInput"
-  );
-
-
-if (searchInput) {
-
-  searchInput.addEventListener(
-    "input",
-    function () {
-
-      renderAnnouncements(
-        allAnnouncements
-      );
-
-    }
-  );
+        }
+    );
 
 }
-
-
-// ========================================
-// CATEGORY FILTER
-// ========================================
-
-const categoryFilter =
-  document.getElementById(
-    "categoryFilter"
-  );
-
-
-if (categoryFilter) {
-
-  categoryFilter.addEventListener(
-    "change",
-    function () {
-
-      renderAnnouncements(
-        allAnnouncements
-      );
-
-    }
-  );
-
-}
-
-
-// ========================================
-// FOOTER YEAR
-// ========================================
-
-const year =
-  document.getElementById(
-    "year"
-  );
-
-
-if (year) {
-
-  year.textContent =
-    new Date().getFullYear();
-
-}
-
-
-// ========================================
-// START WEBSITE
-// ========================================
-
-loadAnnouncements();
-
