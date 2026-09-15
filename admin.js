@@ -8,7 +8,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_oj9LKr__BayRnwrEzBMgcw_C5g2zc5c";
 
-
 const supabaseClient =
     supabase.createClient(
         SUPABASE_URL,
@@ -20,18 +19,13 @@ const supabaseClient =
 // PAGE READY
 // ========================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        setupLogin();
+    setupLogin();
+    setupButtons();
+    checkLogin();
 
-        setupButtons();
-
-        checkLogin();
-
-    }
-);
+});
 
 
 // ========================================
@@ -39,9 +33,7 @@ document.addEventListener(
 // ========================================
 
 function getElement(id) {
-
     return document.getElementById(id);
-
 }
 
 
@@ -51,25 +43,17 @@ function getElement(id) {
 
 async function checkLogin() {
 
-    const {
-        data,
-        error
-    } =
+    const { data, error } =
         await supabaseClient.auth.getSession();
-
 
     if (error) {
 
-        console.error(
-            "SESSION ERROR:",
-            error
-        );
+        console.error("SESSION ERROR:", error);
 
         showLogin();
 
         return;
     }
-
 
     if (data.session) {
 
@@ -80,7 +64,6 @@ async function checkLogin() {
         showLogin();
 
     }
-
 }
 
 
@@ -90,85 +73,48 @@ async function checkLogin() {
 
 function setupLogin() {
 
-    const form =
-        getElement("loginForm");
-
+    const form = getElement("loginForm");
 
     if (!form) {
         return;
     }
 
+    form.addEventListener("submit", async function (event) {
 
-    form.addEventListener(
-        "submit",
-        async function (event) {
+        event.preventDefault();
 
-            event.preventDefault();
+        const email =
+            getElement("adminEmail").value.trim();
 
+        const password =
+            getElement("adminPassword").value;
 
-            const email =
-                getElement(
-                    "adminEmail"
-                ).value.trim();
+        const errorBox =
+            getElement("loginError");
 
+        errorBox.textContent = "Logging in...";
 
-            const password =
-                getElement(
-                    "adminPassword"
-                ).value;
+        const { error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
+        if (error) {
 
-            const errorBox =
-                getElement(
-                    "loginError"
-                );
-
-
-            errorBox.textContent =
-                "Logging in...";
-
-
-            const {
-                error
-            } =
-                await supabaseClient.auth
-                    .signInWithPassword({
-
-                        email:
-                            email,
-
-                        password:
-                            password
-
-                    });
-
-
-            if (error) {
-
-                console.error(
-                    "LOGIN ERROR:",
-                    error
-                );
-
-
-                errorBox.textContent =
-                    "Login failed: " +
-                    error.message;
-
-
-                return;
-            }
-
+            console.error("LOGIN ERROR:", error);
 
             errorBox.textContent =
-                "";
+                "Login failed: " + error.message;
 
-
-            showAdminPanel();
-
+            return;
         }
-    );
 
+        errorBox.textContent = "";
+
+        showAdminPanel();
+
+    });
 }
 
 
@@ -179,26 +125,24 @@ function setupLogin() {
 function showLogin() {
 
     const login =
-        getElement(
-            "loginSection"
-        );
-
+        getElement("loginSection");
 
     const panel =
-        getElement(
-            "adminPanel"
-        );
-
+        getElement("adminPanel");
 
     if (login) {
-        login.style.display = "flex";
-    }
 
+        login.hidden = false;
+        login.style.display = "flex";
+
+    }
 
     if (panel) {
-        panel.style.display = "none";
-    }
 
+        panel.hidden = true;
+        panel.style.display = "none";
+
+    }
 }
 
 
@@ -209,29 +153,26 @@ function showLogin() {
 function showAdminPanel() {
 
     const login =
-        getElement(
-            "loginSection"
-        );
-
+        getElement("loginSection");
 
     const panel =
-        getElement(
-            "adminPanel"
-        );
-
+        getElement("adminPanel");
 
     if (login) {
-        login.style.display = "none";
-    }
 
+        login.hidden = true;
+        login.style.display = "none";
+
+    }
 
     if (panel) {
+
+        panel.hidden = false;
         panel.style.display = "block";
+
     }
 
-
     loadAnnouncements();
-
     loadComments();
 
 }
@@ -244,10 +185,7 @@ function showAdminPanel() {
 function setupButtons() {
 
     const addButton =
-        getElement(
-            "addAnnouncementButton"
-        );
-
+        getElement("addAnnouncementButton");
 
     if (addButton) {
 
@@ -258,12 +196,8 @@ function setupButtons() {
 
     }
 
-
     const logoutButton =
-        getElement(
-            "logoutButton"
-        );
-
+        getElement("logoutButton");
 
     if (logoutButton) {
 
@@ -273,7 +207,6 @@ function setupButtons() {
         );
 
     }
-
 }
 
 
@@ -284,34 +217,22 @@ function setupButtons() {
 async function loadAnnouncements() {
 
     const list =
-        getElement(
-            "announcementList"
-        );
-
+        getElement("announcementList");
 
     if (!list) {
         return;
     }
 
-
     list.innerHTML =
         "Loading announcements...";
 
-
-    const {
-        data,
-        error
-    } =
+    const { data, error } =
         await supabaseClient
             .from("announcements")
             .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
+            .order("created_at", {
+                ascending: false
+            });
 
     if (error) {
 
@@ -320,150 +241,107 @@ async function loadAnnouncements() {
             error
         );
 
-
         list.innerHTML = `
-
             <p class="error-message">
-
-                ${escapeHTML(
-                    error.message
-                )}
-
+                ${escapeHTML(error.message)}
             </p>
-
         `;
-
 
         return;
     }
-
 
     list.innerHTML = "";
 
-
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (!data || data.length === 0) {
 
         list.innerHTML = `
-
             <div class="admin-item">
-
                 No announcements yet.
-
             </div>
-
         `;
-
 
         return;
     }
 
+    data.forEach(function (announcement) {
 
-    data.forEach(
-        function (announcement) {
+        const item =
+            document.createElement("div");
 
-            const item =
-                document.createElement(
-                    "div"
+        item.className = "admin-item";
+
+        const date =
+            announcement.created_at
+                ? new Date(
+                    announcement.created_at
+                ).toLocaleString()
+                : "";
+
+        item.innerHTML = `
+
+            <h3>
+                ${escapeHTML(announcement.title)}
+            </h3>
+
+            <div class="admin-date">
+                ${escapeHTML(date)}
+            </div>
+
+            <p>
+                <strong>Category:</strong>
+                ${escapeHTML(announcement.category)}
+            </p>
+
+            <p class="admin-message">
+                ${escapeHTML(announcement.message)}
+            </p>
+
+            <div class="admin-buttons">
+
+                <button
+                    class="btn gold editButton"
+                    type="button">
+                    Edit
+                </button>
+
+                <button
+                    class="btn danger deleteButton"
+                    type="button">
+                    Delete
+                </button>
+
+            </div>
+        `;
+
+        item.querySelector(
+            ".editButton"
+        ).addEventListener(
+            "click",
+            function () {
+
+                editAnnouncement(
+                    announcement
                 );
 
+            }
+        );
 
-            item.className =
-                "admin-item";
+        item.querySelector(
+            ".deleteButton"
+        ).addEventListener(
+            "click",
+            function () {
 
+                deleteAnnouncement(
+                    announcement.id
+                );
 
-            const date =
-                announcement.created_at
-                    ? new Date(
-                        announcement.created_at
-                    ).toLocaleString()
-                    : "";
+            }
+        );
 
+        list.appendChild(item);
 
-            item.innerHTML = `
-
-                <h3>
-                    ${escapeHTML(
-                        announcement.title
-                    )}
-                </h3>
-
-                <div class="admin-date">
-                    ${escapeHTML(date)}
-                </div>
-
-                <p>
-                    <strong>
-                        Category:
-                    </strong>
-
-                    ${escapeHTML(
-                        announcement.category
-                    )}
-                </p>
-
-                <p class="admin-message">
-                    ${escapeHTML(
-                        announcement.message
-                    )}
-                </p>
-
-                <div class="admin-buttons">
-
-                    <button
-                        class="btn gold editButton"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        class="btn danger deleteButton"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            item.querySelector(
-                ".editButton"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    editAnnouncement(
-                        announcement
-                    );
-
-                }
-            );
-
-
-            item.querySelector(
-                ".deleteButton"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    deleteAnnouncement(
-                        announcement.id
-                    );
-
-                }
-            );
-
-
-            list.appendChild(
-                item
-            );
-
-        }
-    );
-
+    });
 }
 
 
@@ -474,34 +352,22 @@ async function loadAnnouncements() {
 async function addAnnouncement() {
 
     const titleInput =
-        getElement(
-            "announcementTitle"
-        );
-
+        getElement("announcementTitle");
 
     const messageInput =
-        getElement(
-            "announcementMessage"
-        );
-
+        getElement("announcementMessage");
 
     const categoryInput =
-        getElement(
-            "announcementCategory"
-        );
-
+        getElement("announcementCategory");
 
     const title =
         titleInput.value.trim();
 
-
     const message =
         messageInput.value.trim();
 
-
     const category =
         categoryInput.value;
-
 
     if (!title || !message) {
 
@@ -512,25 +378,14 @@ async function addAnnouncement() {
         return;
     }
 
-
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("announcements")
             .insert({
-
-                title:
-                    title,
-
-                message:
-                    message,
-
-                category:
-                    category
-
+                title: title,
+                message: message,
+                category: category
             });
-
 
     if (error) {
 
@@ -539,26 +394,20 @@ async function addAnnouncement() {
             error
         );
 
-
         alert(
             "Could not add announcement: " +
             error.message
         );
 
-
         return;
     }
 
-
     titleInput.value = "";
-
     messageInput.value = "";
-
 
     alert(
         "Announcement added successfully!"
     );
-
 
     loadAnnouncements();
 
@@ -566,7 +415,7 @@ async function addAnnouncement() {
 
 
 // ========================================
-// EDIT
+// EDIT ANNOUNCEMENT
 // ========================================
 
 async function editAnnouncement(
@@ -579,7 +428,6 @@ async function editAnnouncement(
             announcement.title
         );
 
-
     if (
         title === null ||
         !title.trim()
@@ -587,13 +435,11 @@ async function editAnnouncement(
         return;
     }
 
-
     const message =
         prompt(
             "Enter the new message:",
             announcement.message
         );
-
 
     if (
         message === null ||
@@ -602,26 +448,17 @@ async function editAnnouncement(
         return;
     }
 
-
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("announcements")
             .update({
-
-                title:
-                    title.trim(),
-
-                message:
-                    message.trim()
-
+                title: title.trim(),
+                message: message.trim()
             })
             .eq(
                 "id",
                 announcement.id
             );
-
 
     if (error) {
 
@@ -633,19 +470,16 @@ async function editAnnouncement(
         return;
     }
 
-
     loadAnnouncements();
 
 }
 
 
 // ========================================
-// DELETE
+// DELETE ANNOUNCEMENT
 // ========================================
 
-async function deleteAnnouncement(
-    id
-) {
+async function deleteAnnouncement(id) {
 
     if (
         !confirm(
@@ -655,10 +489,7 @@ async function deleteAnnouncement(
         return;
     }
 
-
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("announcements")
             .delete()
@@ -666,7 +497,6 @@ async function deleteAnnouncement(
                 "id",
                 id
             );
-
 
     if (error) {
 
@@ -677,7 +507,6 @@ async function deleteAnnouncement(
 
         return;
     }
-
 
     loadAnnouncements();
 
@@ -691,34 +520,22 @@ async function deleteAnnouncement(
 async function loadComments() {
 
     const list =
-        getElement(
-            "commentList"
-        );
-
+        getElement("commentList");
 
     if (!list) {
         return;
     }
 
-
     list.innerHTML =
         "Loading comments...";
 
-
-    const {
-        data,
-        error
-    } =
+    const { data, error } =
         await supabaseClient
             .from("comments")
             .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
+            .order("created_at", {
+                ascending: false
+            });
 
     if (error) {
 
@@ -727,164 +544,123 @@ async function loadComments() {
             error
         );
 
-
         list.innerHTML = `
-
             <p class="error-message">
-
-                ${escapeHTML(
-                    error.message
-                )}
-
+                ${escapeHTML(error.message)}
             </p>
-
         `;
-
 
         return;
     }
-
 
     list.innerHTML = "";
 
-
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (!data || data.length === 0) {
 
         list.innerHTML = `
-
             <div class="admin-item">
-
                 No comments yet.
-
             </div>
-
         `;
-
 
         return;
     }
 
+    data.forEach(function (comment) {
 
-    data.forEach(
-        function (comment) {
+        const item =
+            document.createElement("div");
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+        item.className = "admin-item";
 
+        const status =
+            comment.approved
+                ? "Approved"
+                : "Pending";
 
-            item.className =
-                "admin-item";
+        item.innerHTML = `
 
+            <h3>
+                ${escapeHTML(comment.name)}
+            </h3>
 
-            const status =
-                comment.approved
-                    ? "Approved"
-                    : "Pending";
+            <p class="admin-message">
+                ${escapeHTML(comment.text)}
+            </p>
 
+            <p>
+                Status:
 
-            item.innerHTML = `
+                <span class="${
+                    comment.approved
+                        ? "status-approved"
+                        : "status-pending"
+                }">
 
-                <h3>
-                    ${escapeHTML(
-                        comment.name
-                    )}
-                </h3>
+                    ${status}
 
-                <p class="admin-message">
-                    ${escapeHTML(
-                        comment.text
-                    )}
-                </p>
+                </span>
+            </p>
 
-                <p>
+            <div class="admin-buttons">
 
-                    Status:
+                ${
+                    !comment.approved
+                        ? `
+                            <button
+                                class="btn green approveButton"
+                                type="button">
+                                Approve
+                            </button>
+                        `
+                        : ""
+                }
 
-                    <span class="${
-                        comment.approved
-                            ? "status-approved"
-                            : "status-pending"
-                    }">
+                <button
+                    class="btn danger deleteCommentButton"
+                    type="button">
+                    Delete
+                </button>
 
-                        ${status}
+            </div>
+        `;
 
-                    </span>
-
-                </p>
-
-                <div class="admin-buttons">
-
-                    ${
-                        !comment.approved
-                            ? `
-                                <button
-                                    class="btn green approveButton"
-                                >
-                                    Approve
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    <button
-                        class="btn danger deleteCommentButton"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            const approveButton =
-                item.querySelector(
-                    ".approveButton"
-                );
-
-
-            if (approveButton) {
-
-                approveButton.addEventListener(
-                    "click",
-                    function () {
-
-                        approveComment(
-                            comment.id
-                        );
-
-                    }
-                );
-
-            }
-
-
+        const approveButton =
             item.querySelector(
-                ".deleteCommentButton"
-            ).addEventListener(
+                ".approveButton"
+            );
+
+        if (approveButton) {
+
+            approveButton.addEventListener(
                 "click",
                 function () {
 
-                    deleteComment(
+                    approveComment(
                         comment.id
                     );
 
                 }
             );
 
-
-            list.appendChild(
-                item
-            );
-
         }
-    );
 
+        item.querySelector(
+            ".deleteCommentButton"
+        ).addEventListener(
+            "click",
+            function () {
+
+                deleteComment(
+                    comment.id
+                );
+
+            }
+        );
+
+        list.appendChild(item);
+
+    });
 }
 
 
@@ -892,13 +668,9 @@ async function loadComments() {
 // APPROVE COMMENT
 // ========================================
 
-async function approveComment(
-    id
-) {
+async function approveComment(id) {
 
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("comments")
             .update({
@@ -908,7 +680,6 @@ async function approveComment(
                 "id",
                 id
             );
-
 
     if (error) {
 
@@ -920,7 +691,6 @@ async function approveComment(
         return;
     }
 
-
     loadComments();
 
 }
@@ -930,9 +700,7 @@ async function approveComment(
 // DELETE COMMENT
 // ========================================
 
-async function deleteComment(
-    id
-) {
+async function deleteComment(id) {
 
     if (
         !confirm(
@@ -942,10 +710,7 @@ async function deleteComment(
         return;
     }
 
-
-    const {
-        error
-    } =
+    const { error } =
         await supabaseClient
             .from("comments")
             .delete()
@@ -953,7 +718,6 @@ async function deleteComment(
                 "id",
                 id
             );
-
 
     if (error) {
 
@@ -964,7 +728,6 @@ async function deleteComment(
 
         return;
     }
-
 
     loadComments();
 
@@ -985,7 +748,7 @@ async function logout() {
 
 
 // ========================================
-// SECURITY
+// SECURITY / ESCAPE HTML
 // ========================================
 
 function escapeHTML(value) {
@@ -995,13 +758,11 @@ function escapeHTML(value) {
         function (character) {
 
             return {
-
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
                 '"': "&quot;",
                 "'": "&#039;"
-
             }[character];
 
         }
