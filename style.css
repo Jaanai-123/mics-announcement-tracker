@@ -1,617 +1,324 @@
+/* =========================
+   GENERAL
+========================= */
+
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
+    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: #f5f7f4;
+    background: #f5f5f5;
     color: #111;
-    line-height: 1.6;
 }
 
-.container {
-    width: 90%;
-    max-width: 1100px;
-    margin: auto;
-}
 
-button,
-input,
-textarea,
-select {
-    font: inherit;
-}
+/* =========================
+   HEADER
+========================= */
 
-/* HEADER */
-
-.site-header {
-    background: #006b3c;
+.header {
+    background: #006633;
     color: white;
-    border-bottom: 5px solid #f4c430;
-}
-
-.header-container {
-    width: 90%;
-    max-width: 1200px;
-    margin: auto;
-    min-height: 90px;
+    padding: 18px 30px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    gap: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-.school-brand {
+.header-content {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
 .school-logo {
-    width: 65px;
-    height: 65px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
     background: white;
-    border-radius: 8px;
-    padding: 4px;
+    border-radius: 50%;
+    padding: 5px;
 }
 
-.school-brand h1 {
-    font-size: 20px;
-    line-height: 1.2;
+.header h1 {
+    margin: 0;
+    font-size: 24px;
 }
 
-.school-brand p {
-    font-size: 14px;
-    opacity: 0.9;
+.header p {
+    margin: 5px 0 0;
+    color: #f2c94c;
 }
 
-/* ADMIN / PUBLIC BUTTON */
+
+/* =========================
+   ADMIN LINK
+========================= */
 
 .admin-link {
-    display: inline-block;
-
-    background: #f4c430;
-    color: #111;
-
+    color: white;
     text-decoration: none;
-
-    border: 2px solid #f4c430;
-
+    background: #d4af37;
     padding: 10px 18px;
-
     border-radius: 7px;
-
     font-weight: bold;
 }
 
 .admin-link:hover {
-    background: white;
-    color: #006b3c;
+    background: #b99520;
 }
 
-/* HERO */
 
-.hero {
-    background:
-        linear-gradient(
-            135deg,
-            #006b3c,
-            #111
-        );
+/* =========================
+   MAIN CONTAINER
+========================= */
 
-    color: white;
-
-    padding: 70px 20px;
-
-    text-align: center;
-}
-
-.hero h2 {
-    font-size: 38px;
-    margin-bottom: 10px;
-}
-
-.hero p {
-    max-width: 650px;
+.container {
+    max-width: 1000px;
     margin: auto;
-    font-size: 17px;
+    padding: 30px 20px;
 }
 
-/* SEARCH */
 
-.controls {
-    display: flex;
-    gap: 15px;
+/* =========================
+   WELCOME
+========================= */
 
-    margin: 35px 0;
-
-    flex-wrap: wrap;
-}
-
-.controls input,
-.controls select {
-    padding: 13px 15px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 7px;
-
+.welcome {
     background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+
+    border-left: 6px solid #d4af37;
+
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-.controls input {
-    flex: 1;
-    min-width: 220px;
+.welcome h2 {
+    color: #006633;
+    margin-top: 0;
 }
 
-.controls select {
-    min-width: 190px;
+
+/* =========================
+   SECTION TITLES
+========================= */
+
+.section-title {
+    color: #006633;
+    border-bottom: 3px solid #d4af37;
+    padding-bottom: 8px;
+    margin-top: 35px;
 }
 
-/* ANNOUNCEMENTS */
 
-.announcement-list {
-    display: grid;
-    gap: 20px;
-}
+/* =========================
+   ANNOUNCEMENTS
+========================= */
 
 .announcement {
     background: white;
-
-    padding: 25px;
+    padding: 20px;
+    margin: 15px 0;
 
     border-radius: 10px;
 
-    border-left: 6px solid #006b3c;
-
-    box-shadow:
-        0 3px 12px
-        rgba(0, 0, 0, 0.08);
-}
-
-.announcement.important {
-    border-left-color: #d4a900;
-}
-
-.announcement.academic {
-    border-left-color: #006b3c;
-}
-
-.announcement.event {
-    border-left-color: #222;
-}
-
-.announcement.sports {
-    border-left-color: #008c50;
-}
-
-.announcement.general {
-    border-left-color: #777;
-}
-
-.tag {
-    display: inline-block;
-
-    background: #006b3c;
-
-    color: white;
-
-    padding: 4px 10px;
-
-    border-radius: 20px;
-
-    font-size: 12px;
-
-    text-transform: capitalize;
-
-    margin-bottom: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
 .announcement h3 {
-    font-size: 23px;
-    margin-bottom: 4px;
+    margin-top: 0;
+    color: #006633;
 }
 
-.date {
+.announcement-category {
+    display: inline-block;
+
+    background: #d4af37;
+    color: #111;
+
+    padding: 5px 10px;
+    border-radius: 20px;
+
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.announcement-date {
     color: #777;
     font-size: 13px;
-    margin-bottom: 15px;
 }
 
-.message {
-    white-space: pre-wrap;
+.announcement-message {
+    line-height: 1.6;
 }
 
-/* COMMENTS */
 
-.comments {
-    margin-top: 20px;
-    padding-top: 18px;
+/* =========================
+   COMMENTS
+========================= */
 
-    border-top: 1px solid #ddd;
+.comments-section {
+    margin-top: 40px;
 }
 
-.comments h4 {
-    margin-bottom: 12px;
+#commentForm {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.approvedComments {
-    margin-bottom: 15px;
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+
+    border: 1px solid #ccc;
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 15px;
 }
 
-.approved-comment {
-    background: #f1f4f1;
+textarea {
+    resize: vertical;
+}
 
-    padding: 12px 15px;
+button {
+    background: #006633;
+    color: white;
+
+    border: none;
+    border-radius: 7px;
+
+    padding: 12px 18px;
+
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #004d26;
+}
+
+
+/* =========================
+   COMMENT DISPLAY
+========================= */
+
+.comment {
+    background: white;
+    margin-top: 15px;
+    padding: 15px;
+
+    border-left: 4px solid #d4af37;
 
     border-radius: 7px;
 
-    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
-.commentForm {
-    display: grid;
-    gap: 10px;
+.comment-name {
+    font-weight: bold;
+    color: #006633;
 }
 
-.commentForm input,
-.commentForm textarea {
-    width: 100%;
-
-    padding: 11px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 6px;
-
-    background: white;
+.comment-date {
+    font-size: 12px;
+    color: #777;
 }
 
-.commentForm textarea {
-    min-height: 90px;
-    resize: vertical;
+.comment-text {
+    margin-top: 8px;
 }
 
-/* BUTTONS */
 
-.btn {
-    border: none;
+/* =========================
+   MESSAGES
+========================= */
 
-    border-radius: 6px;
+.loading {
+    text-align: center;
+    color: #777;
+}
 
-    padding: 11px 18px;
-
-    cursor: pointer;
-
+.success {
+    color: #006633;
     font-weight: bold;
 }
 
-.btn.gold {
-    background: #f4c430;
-    color: #111;
+.error {
+    color: #b00020;
+    font-weight: bold;
 }
 
-.btn.gold:hover {
-    background: #d9ab00;
-}
 
-.btn.green {
-    background: #006b3c;
-    color: white;
-}
-
-.btn.green:hover {
-    background: #004f2c;
-}
-
-.btn.dark {
-    background: #111;
-    color: white;
-}
-
-.btn.danger {
-    background: #b00020;
-    color: white;
-}
-
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* EMPTY MESSAGE */
-
-.empty-message {
-    text-align: center;
-
-    padding: 45px 20px;
-
-    background: white;
-
-    border-radius: 10px;
-
-    margin-bottom: 35px;
-}
-
-/* EVENTS */
-
-.events-section {
-    margin: 60px 0;
-}
-
-.section-heading {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.section-heading h2 {
-    font-size: 30px;
-}
-
-.events-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(220px, 1fr)
-        );
-
-    gap: 20px;
-}
-
-.event-card {
-    background: white;
-
-    padding: 25px;
-
-    text-align: center;
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 3px 12px
-        rgba(0, 0, 0, 0.07);
-}
-
-.event-icon {
-    font-size: 35px;
-    margin-bottom: 10px;
-}
-
-/* ACADEMIC CALENDAR */
+/* =========================
+   CALENDAR
+========================= */
 
 .calendar-section {
-    margin: 60px 0;
+    margin-top: 40px;
 }
 
-.calendar-card {
+.calendar-container {
     background: white;
-
-    padding: 15px;
-
+    padding: 10px;
     border-radius: 10px;
 
-    box-shadow:
-        0 3px 12px
-        rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-.calendar-pdf {
-    display: block;
-
-    width: 100%;
-
-    height: 850px;
-
+.calendar-container iframe {
     border: none;
-
-    border-radius: 6px;
 }
 
-/* FOOTER */
 
-.site-footer {
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+    margin-top: 50px;
+
     background: #111;
-
     color: white;
 
     text-align: center;
 
-    padding: 30px 20px;
-
-    margin-top: 50px;
-}
-
-.copyright {
-    font-size: 13px;
-    opacity: 0.7;
-}
-
-/* ADMIN LOGIN */
-
-.admin-login {
-    min-height: 70vh;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 40px 20px;
-}
-
-.login-card {
-    background: white;
-
-    width: 100%;
-    max-width: 450px;
-
-    padding: 35px;
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 4px 20px
-        rgba(0, 0, 0, 0.1);
-}
-
-.login-card form {
-    display: grid;
-    gap: 10px;
-}
-
-.login-card input {
-    padding: 12px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 6px;
-}
-
-.error-message {
-    color: #b00020 !important;
-
-    margin-top: 15px;
-
-    font-weight: bold;
-}
-
-/* ADMIN PANEL */
-
-.admin-panel {
-    padding: 40px 0 70px;
-}
-
-.admin-top {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    margin-bottom: 25px;
-}
-
-.admin-card {
-    background: white;
-
     padding: 25px;
-
-    margin-bottom: 25px;
-
-    border-radius: 10px;
-
-    box-shadow:
-        0 3px 12px
-        rgba(0, 0, 0, 0.08);
 }
 
-.form-group {
-    margin-bottom: 18px;
+footer p {
+    margin: 5px;
 }
 
-.form-group label {
-    display: block;
 
-    font-weight: bold;
-
-    margin-bottom: 5px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-
-    padding: 12px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 6px;
-}
-
-.form-group textarea {
-    min-height: 130px;
-
-    resize: vertical;
-}
-
-.admin-list {
-    display: grid;
-    gap: 15px;
-}
-
-.admin-item {
-    border: 1px solid #ddd;
-
-    border-radius: 8px;
-
-    padding: 18px;
-
-    background: #fafafa;
-}
-
-.admin-item h3 {
-    margin-bottom: 5px;
-}
-
-.admin-date {
-    font-size: 12px;
-
-    color: #777;
-
-    margin-bottom: 10px;
-}
-
-.admin-message {
-    white-space: pre-wrap;
-
-    margin-bottom: 15px;
-}
-
-.admin-buttons {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 8px;
-}
-
-.status-pending {
-    color: #9a7200;
-
-    font-weight: bold;
-}
-
-.status-approved {
-    color: #006b3c;
-
-    font-weight: bold;
-}
-
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 700px) {
 
-    .header-container {
-        padding: 15px 0;
-
-        flex-direction: column;
-
-        align-items: flex-start;
+    .header {
+        padding: 15px;
     }
 
-    .school-brand h1 {
-        font-size: 16px;
+    .header-content {
+        gap: 10px;
     }
 
     .school-logo {
@@ -619,39 +326,24 @@ select {
         height: 55px;
     }
 
+    .header h1 {
+        font-size: 17px;
+    }
+
+    .header p {
+        font-size: 13px;
+    }
+
     .admin-link {
-        align-self: flex-end;
+        padding: 8px 10px;
+        font-size: 13px;
     }
 
-    .hero {
-        padding: 50px 20px;
+    .container {
+        padding: 20px 12px;
     }
 
-    .hero h2 {
-        font-size: 30px;
+    .calendar-container iframe {
+        height: 500px;
     }
-
-    .controls {
-        flex-direction: column;
-    }
-
-    .controls input,
-    .controls select {
-        width: 100%;
-    }
-
-    .admin-top {
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-    .admin-top .btn {
-        width: 100%;
-    }
-
-    .calendar-pdf {
-        height: 650px;
-    }
-
 }
