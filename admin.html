@@ -3,193 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Morgan International Community School</title>
+  <meta name="theme-color" content="#004f2c">
+  <title>MICS Admin Area</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Supabase JS Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body>
+<body class="admin-page">
 
-<header>
-  <div class="brand">
-    <img src="school-logo.png" alt="MICS Logo">
-
-    <div>
-      <h1>Morgan International Community School</h1>
-      <p>School Announcement Tracker</p>
-    </div>
-  </div>
-
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#announcements">Announcements</a>
-    <a href="#events">Events</a>
-    <a href="#about">About</a>
-    <a href="admin.html">Admin Area</a>
-  </nav>
-</header>
-
-
-<main>
-
-<section id="home" class="hero">
-
-  <span>WELCOME TO MICS</span>
-
-  <h2>Stay updated with school news.</h2>
-
-  <p>
-    Find the latest announcements, events and important information
-    from Morgan International Community School.
-  </p>
-
-  <a class="btn gold" href="#announcements">
-    View Announcements
-  </a>
-
-</section>
-
-
-<section id="announcements" class="section">
-
-  <div class="heading">
-
-    <div>
-      <span>LATEST NEWS</span>
-      <h2>Announcements</h2>
+  <header class="admin-header">
+    <div class="brand">
+      <img src="school-logo.png" alt="MICS Logo">
+      <div>
+        <h1>Morgan International Community School</h1>
+        <p>Administration Portal</p>
+      </div>
     </div>
 
-    <div class="controls">
+    <nav>
+      <a href="index.html">← Public Site</a>
+    </nav>
+  </header>
 
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Search announcements..."
-      >
+  <main class="admin">
 
-      <select id="categoryFilter">
+    <section id="loginSection" class="login-shell">
+      <div class="login-card card">
 
-        <option value="all">
-          All categories
-        </option>
+        <div class="login-brand">
+          <div class="login-logo">
+            <img src="school-logo.png" alt="Morgan International Community School logo">
+          </div>
 
-        <option value="important">
-          Important
-        </option>
+          <span class="security-badge">
+            <span class="status-dot"></span>
+            SECURE STAFF AREA
+          </span>
 
-        <option value="academic">
-          Academic
-        </option>
+          <h2>Welcome back</h2>
+          <p class="login-subtitle">
+            Sign in to manage school announcements and review comments.
+          </p>
+        </div>
 
-        <option value="sports">
-          Sports
-        </option>
+        <form id="loginForm" class="login-form">
 
-        <option value="events">
-          Events
-        </option>
+          <label for="adminEmail">
+            <span>Email address</span>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">✉</span>
+              <input id="adminEmail" type="email" placeholder="admin@mics.edu"
+                     autocomplete="username" required>
+            </div>
+          </label>
 
-      </select>
+          <label for="adminPassword">
+            <span>Password</span>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">••</span>
+              <input id="adminPassword" type="password" placeholder="Enter your password"
+                     autocomplete="current-password" required>
+            </div>
+          </label>
 
-    </div>
+          <button class="btn gold login-button" type="submit">
+            Sign In <span aria-hidden="true">→</span>
+          </button>
 
-  </div>
+          <p id="loginError" class="error" role="alert"></p>
+        </form>
 
-  <div id="announcementList" class="grid"></div>
+        <div class="login-footer">
+          <span aria-hidden="true">🔒</span>
+          <span>Authorized MICS administrators only</span>
+        </div>
+      </div>
+    </section>
 
-  <p id="noAnnouncements" class="empty" hidden>
-    No announcements match your search.
-  </p>
+    <section id="adminPanel" hidden>
 
-</section>
+      <div class="heading dashboard-heading">
+        <div>
+          <span>DASHBOARD</span>
+          <h2>Manage School Updates</h2>
+          <p class="dashboard-subtitle">
+            Publish announcements and moderate community comments.
+          </p>
+        </div>
 
+        <button id="logoutButton" class="btn black logout-button" type="button">
+          Log Out
+        </button>
+      </div>
 
-<section id="events" class="section light">
+      <div class="adminGrid">
 
-  <div class="heading">
+        <section class="card admin-form-card">
+          <div class="card-heading">
+            <div class="card-icon">＋</div>
+            <div>
+              <p class="card-kicker">CONTENT</p>
+              <h3 id="formTitle">Add Announcement</h3>
+            </div>
+          </div>
 
-    <div>
-      <span>WHAT'S COMING</span>
-      <h2>Upcoming Events</h2>
-    </div>
+          <form id="announcementForm" onsubmit="return false;">
+            <input id="editId" type="hidden">
 
-  </div>
+            <label for="announcementTitle">
+              Title
+              <input id="announcementTitle" maxlength="100"
+                     placeholder="Announcement title" required>
+            </label>
 
-  <div class="grid events">
+            <label for="announcementMessage">
+              Message
+              <textarea id="announcementMessage" maxlength="1000" rows="6"
+                        placeholder="Write the announcement..." required></textarea>
+            </label>
 
-    <article>
-      <h3>School Events</h3>
-      <p>
-        School events can be listed here by the administration.
-      </p>
-    </article>
+            <label for="announcementCategory">
+              Category
+              <select id="announcementCategory">
+                <option value="important">Important</option>
+                <option value="academic">Academic</option>
+                <option value="sports">Sports</option>
+                <option value="events">Events</option>
+              </select>
+            </label>
 
-    <article>
-      <h3>Academic Activities</h3>
-      <p>
-        Keep students and parents informed about important dates.
-      </p>
-    </article>
+            <button id="addAnnouncementButton" type="button" class="btn gold save-button">
+              Save Announcement
+            </button>
+          </form>
+        </section>
 
-    <article>
-      <h3>Sports Activities</h3>
-      <p>
-        Share sports fixtures and school activities here.
-      </p>
-    </article>
+        <section class="card">
+          <div class="card-heading">
+            <div class="card-icon">☰</div>
+            <div>
+              <p class="card-kicker">PUBLISHED CONTENT</p>
+              <h3>Announcements</h3>
+            </div>
+          </div>
 
-  </div>
+          <div id="announcementList"></div>
+        </section>
 
-</section>
+      </div>
 
+      <section class="card comments-card">
+        <div class="heading">
+          <div class="card-heading">
+            <div class="card-icon">💬</div>
+            <div>
+              <p class="card-kicker">MODERATION</p>
+              <h3>Comments Awaiting Review</h3>
+            </div>
+          </div>
+        </div>
 
-<section id="about" class="section">
+        <div id="commentList"></div>
+      </section>
 
-  <div class="about about-info">
+    </section>
+  </main>
 
-    <span>ABOUT THIS SITE</span>
-
-    <h2>Stay connected with MICS.</h2>
-
-    <p>
-      Use this site to quickly find the latest school announcements,
-      upcoming events and important updates from Morgan International
-      Community School.
-    </p>
-
-    <p>
-      You can search announcements, filter them by category and share
-      comments with the school community.
-    </p>
-
-    <div class="about-tip">
-      <strong>Tip:</strong>
-      Check back regularly so you never miss an important update.
-    </div>
-
-  </div>
-
-</section>
-
-</main>
-
-
-<footer>
-
-  <p>
-    &copy;
-    <span id="year"></span>
-    Morgan International Community School
-  </p>
-
-  <a href="admin.html">
-    Admin Area
-  </a>
-
-</footer>
-
-<script src="script1.js"></script>
-
+  <script src="admin1.js"></script>
 </body>
 </html>
