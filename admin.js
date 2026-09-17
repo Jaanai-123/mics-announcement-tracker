@@ -1,1075 +1,195 @@
-// ========================================
-// MICS ADMIN - SUPABASE
-// ========================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morgan International Community School</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
 
-const SUPABASE_URL =
-    "https://twbpewwzclktdkavrrgy.supabase.co";
+<body>
 
-const SUPABASE_KEY =
-    "sb_publishable_oj9LKr__BayRnwrEzBMgcw_C5g2zc5c";
+<header>
+  <div class="brand">
+    <img src="school-logo.png" alt="MICS Logo">
 
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    <div>
+      <h1>Morgan International Community School</h1>
+      <p>School Announcement Tracker</p>
+    </div>
+  </div>
 
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#announcements">Announcements</a>
+    <a href="#events">Events</a>
+    <a href="#about">About</a>
+    <a href="admin.html">Admin Area</a>
+  </nav>
+</header>
 
-// ========================================
-// START
-// ========================================
 
-document.addEventListener("DOMContentLoaded", function () {
+<main>
 
-    setupLogin();
-    setupButtons();
-    checkLogin();
+<section id="home" class="hero">
 
-});
+  <span>WELCOME TO MICS</span>
 
+  <h2>Stay updated with school news.</h2>
 
-// ========================================
-// GET ELEMENT
-// ========================================
+  <p>
+    Find the latest announcements, events and important information
+    from Morgan International Community School.
+  </p>
 
-function getElement(id) {
-    return document.getElementById(id);
-}
+  <a class="btn gold" href="#announcements">
+    View Announcements
+  </a>
 
+</section>
 
-// ========================================
-// CHECK IF ALREADY LOGGED IN
-// ========================================
 
-async function checkLogin() {
+<section id="announcements" class="section">
 
-    try {
+  <div class="heading">
 
-        const { data, error } =
-            await supabaseClient.auth.getSession();
+    <div>
+      <span>LATEST NEWS</span>
+      <h2>Announcements</h2>
+    </div>
 
-        if (error) {
+    <div class="controls">
 
-            console.error("Session error:", error);
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search announcements..."
+      >
 
-            showLogin();
+      <select id="categoryFilter">
 
-            return;
-        }
+        <option value="all">
+          All categories
+        </option>
 
-        if (data && data.session) {
+        <option value="important">
+          Important
+        </option>
 
-            showAdminPanel();
+        <option value="academic">
+          Academic
+        </option>
 
-        } else {
+        <option value="sports">
+          Sports
+        </option>
 
-            showLogin();
+        <option value="events">
+          Events
+        </option>
 
-        }
+      </select>
 
-    } catch (error) {
+    </div>
 
-        console.error("Check login error:", error);
+  </div>
 
-        showLogin();
+  <div id="announcementList" class="grid"></div>
 
-    }
-}
+  <p id="noAnnouncements" class="empty" hidden>
+    No announcements match your search.
+  </p>
 
+</section>
 
-// ========================================
-// LOGIN
-// ========================================
 
-function setupLogin() {
+<section id="events" class="section light">
 
-    const form = getElement("loginForm");
+  <div class="heading">
 
-    if (!form) {
+    <div>
+      <span>WHAT'S COMING</span>
+      <h2>Upcoming Events</h2>
+    </div>
 
-        console.error("loginForm was not found.");
+  </div>
 
-        return;
-    }
+  <div class="grid events">
 
-    form.addEventListener("submit", async function (event) {
+    <article>
+      <h3>School Events</h3>
+      <p>
+        School events can be listed here by the administration.
+      </p>
+    </article>
 
-        event.preventDefault();
+    <article>
+      <h3>Academic Activities</h3>
+      <p>
+        Keep students and parents informed about important dates.
+      </p>
+    </article>
 
-        const emailInput =
-            getElement("adminEmail");
+    <article>
+      <h3>Sports Activities</h3>
+      <p>
+        Share sports fixtures and school activities here.
+      </p>
+    </article>
 
-        const passwordInput =
-            getElement("adminPassword");
+  </div>
 
-        const errorBox =
-            getElement("loginError");
+</section>
 
 
-        const email =
-            emailInput.value.trim();
+<section id="about" class="section">
 
-        const password =
-            passwordInput.value;
+  <div class="about about-info">
 
+    <span>ABOUT THIS SITE</span>
 
-        if (!email || !password) {
+    <h2>Stay connected with MICS.</h2>
 
-            errorBox.textContent =
-                "Please enter your email and password.";
+    <p>
+      Use this site to quickly find the latest school announcements,
+      upcoming events and important updates from Morgan International
+      Community School.
+    </p>
 
-            return;
-        }
+    <p>
+      You can search announcements, filter them by category and share
+      comments with the school community.
+    </p>
 
+    <div class="about-tip">
+      <strong>Tip:</strong>
+      Check back regularly so you never miss an important update.
+    </div>
 
-        errorBox.textContent =
-            "Signing in...";
+  </div>
 
+</section>
 
-        try {
+</main>
 
-            const { data, error } =
-                await supabaseClient.auth.signInWithPassword({
 
-                    email: email,
+<footer>
 
-                    password: password
+  <p>
+    &copy;
+    <span id="year"></span>
+    Morgan International Community School
+  </p>
 
-                });
+  <a href="admin.html">
+    Admin Area
+  </a>
 
+</footer>
 
-            if (error) {
+<script src="script1.js"></script>
 
-                console.error(
-                    "LOGIN ERROR:",
-                    error
-                );
-
-                errorBox.textContent =
-                    "Login failed: " +
-                    error.message;
-
-                return;
-            }
-
-
-            console.log(
-                "Login successful:",
-                data
-            );
-
-
-            errorBox.textContent = "";
-
-
-            // IMPORTANT:
-            // Remove the hidden attribute
-            // so the dashboard becomes visible.
-
-            showAdminPanel();
-
-
-        } catch (error) {
-
-            console.error(
-                "Unexpected login error:",
-                error
-            );
-
-            errorBox.textContent =
-                "Something went wrong. Please try again.";
-
-        }
-
-    });
-
-}
-
-
-// ========================================
-// SHOW LOGIN
-// ========================================
-
-function showLogin() {
-
-    const login =
-        getElement("loginSection");
-
-    const panel =
-        getElement("adminPanel");
-
-
-    if (login) {
-
-        login.hidden = false;
-
-        login.style.display = "flex";
-
-    }
-
-
-    if (panel) {
-
-        panel.hidden = true;
-
-        panel.style.display = "none";
-
-    }
-
-}
-
-
-// ========================================
-// SHOW ADMIN PANEL
-// ========================================
-
-function showAdminPanel() {
-
-    const login =
-        getElement("loginSection");
-
-    const panel =
-        getElement("adminPanel");
-
-
-    // Hide login
-
-    if (login) {
-
-        login.hidden = true;
-
-        login.style.display = "none";
-
-    }
-
-
-    // SHOW ADMIN DASHBOARD
-
-    if (panel) {
-
-        panel.hidden = false;
-
-        panel.style.display = "block";
-
-    }
-
-
-    // Load dashboard information
-
-    loadAnnouncements();
-
-    loadComments();
-
-}
-
-
-// ========================================
-// BUTTONS
-// ========================================
-
-function setupButtons() {
-
-    const addButton =
-        getElement("addAnnouncementButton");
-
-
-    if (addButton) {
-
-        addButton.addEventListener(
-            "click",
-            addAnnouncement
-        );
-
-    }
-
-
-    const logoutButton =
-        getElement("logoutButton");
-
-
-    if (logoutButton) {
-
-        logoutButton.addEventListener(
-            "click",
-            logout
-        );
-
-    }
-
-}
-
-
-// ========================================
-// LOAD ANNOUNCEMENTS
-// ========================================
-
-async function loadAnnouncements() {
-
-    const list =
-        getElement("announcementList");
-
-
-    if (!list) {
-
-        return;
-
-    }
-
-
-    list.innerHTML =
-        "<p>Loading announcements...</p>";
-
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("announcements")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Announcement error:",
-                error
-            );
-
-            list.innerHTML =
-                "<p>Could not load announcements.</p>";
-
-            return;
-
-        }
-
-
-        list.innerHTML = "";
-
-
-        if (!data || data.length === 0) {
-
-            list.innerHTML = `
-                <div class="admin-item">
-                    No announcements yet.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        data.forEach(function (announcement) {
-
-            const item =
-                document.createElement("div");
-
-
-            item.className =
-                "admin-item";
-
-
-            const date =
-                announcement.created_at
-                    ? new Date(
-                        announcement.created_at
-                    ).toLocaleString()
-                    : "";
-
-
-            item.innerHTML = `
-
-                <h3>
-                    ${escapeHTML(
-                        announcement.title
-                    )}
-                </h3>
-
-                <div class="admin-date">
-                    ${escapeHTML(date)}
-                </div>
-
-                <p>
-                    <strong>Category:</strong>
-                    ${escapeHTML(
-                        announcement.category || ""
-                    )}
-                </p>
-
-                <p class="admin-message">
-                    ${escapeHTML(
-                        announcement.message
-                    )}
-                </p>
-
-                <div class="admin-buttons">
-
-                    <button
-                        type="button"
-                        class="btn gold editButton">
-                        Edit
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn danger deleteButton">
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            const editButton =
-                item.querySelector(
-                    ".editButton"
-                );
-
-
-            const deleteButton =
-                item.querySelector(
-                    ".deleteButton"
-                );
-
-
-            editButton.addEventListener(
-                "click",
-                function () {
-
-                    editAnnouncement(
-                        announcement
-                    );
-
-                }
-            );
-
-
-            deleteButton.addEventListener(
-                "click",
-                function () {
-
-                    deleteAnnouncement(
-                        announcement.id
-                    );
-
-                }
-            );
-
-
-            list.appendChild(item);
-
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Load announcements error:",
-            error
-        );
-
-        list.innerHTML =
-            "<p>Could not load announcements.</p>";
-
-    }
-
-}
-
-
-// ========================================
-// ADD ANNOUNCEMENT
-// ========================================
-
-async function addAnnouncement() {
-
-    const titleInput =
-        getElement("announcementTitle");
-
-    const messageInput =
-        getElement("announcementMessage");
-
-    const categoryInput =
-        getElement("announcementCategory");
-
-
-    const title =
-        titleInput.value.trim();
-
-    const message =
-        messageInput.value.trim();
-
-    const category =
-        categoryInput.value;
-
-
-    if (!title || !message) {
-
-        alert(
-            "Please enter a title and message."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("announcements")
-                .insert({
-
-                    title: title,
-
-                    message: message,
-
-                    category: category
-
-                });
-
-
-        if (error) {
-
-            console.error(
-                "Add announcement error:",
-                error
-            );
-
-            alert(
-                "Could not add announcement:\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        titleInput.value = "";
-
-        messageInput.value = "";
-
-
-        alert(
-            "Announcement added successfully!"
-        );
-
-
-        loadAnnouncements();
-
-
-    } catch (error) {
-
-        console.error(
-            "Unexpected error:",
-            error
-        );
-
-        alert(
-            "Something went wrong."
-        );
-
-    }
-
-}
-
-
-// ========================================
-// EDIT ANNOUNCEMENT
-// ========================================
-
-async function editAnnouncement(
-    announcement
-) {
-
-    const newTitle =
-        prompt(
-            "Enter the new title:",
-            announcement.title
-        );
-
-
-    if (
-        newTitle === null ||
-        !newTitle.trim()
-    ) {
-
-        return;
-
-    }
-
-
-    const newMessage =
-        prompt(
-            "Enter the new message:",
-            announcement.message
-        );
-
-
-    if (
-        newMessage === null ||
-        !newMessage.trim()
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("announcements")
-                .update({
-
-                    title:
-                        newTitle.trim(),
-
-                    message:
-                        newMessage.trim()
-
-                })
-                .eq(
-                    "id",
-                    announcement.id
-                );
-
-
-        if (error) {
-
-            alert(
-                "Could not edit announcement:\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        loadAnnouncements();
-
-
-    } catch (error) {
-
-        console.error(
-            "Edit error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ========================================
-// DELETE ANNOUNCEMENT
-// ========================================
-
-async function deleteAnnouncement(id) {
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete this announcement?"
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("announcements")
-                .delete()
-                .eq(
-                    "id",
-                    id
-                );
-
-
-        if (error) {
-
-            alert(
-                "Could not delete announcement:\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        loadAnnouncements();
-
-
-    } catch (error) {
-
-        console.error(
-            "Delete error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ========================================
-// LOAD COMMENTS
-// ========================================
-
-async function loadComments() {
-
-    const list =
-        getElement("commentList");
-
-
-    if (!list) {
-
-        return;
-
-    }
-
-
-    list.innerHTML =
-        "<p>Loading comments...</p>";
-
-
-    try {
-
-        const { data, error } =
-            await supabaseClient
-                .from("comments")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(
-                "Comment error:",
-                error
-            );
-
-            list.innerHTML =
-                "<p>Could not load comments.</p>";
-
-            return;
-
-        }
-
-
-        list.innerHTML = "";
-
-
-        if (!data || data.length === 0) {
-
-            list.innerHTML = `
-                <div class="admin-item">
-                    No comments yet.
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        data.forEach(function (comment) {
-
-            const item =
-                document.createElement("div");
-
-
-            item.className =
-                "admin-item";
-
-
-            const status =
-                comment.approved
-                    ? "Approved"
-                    : "Pending";
-
-
-            item.innerHTML = `
-
-                <h3>
-                    ${escapeHTML(
-                        comment.name || "Anonymous"
-                    )}
-                </h3>
-
-                <p class="admin-message">
-                    ${escapeHTML(
-                        comment.text || ""
-                    )}
-                </p>
-
-                <p>
-                    Status:
-                    <strong>
-                        ${status}
-                    </strong>
-                </p>
-
-                <div class="admin-buttons">
-
-                    ${
-                        !comment.approved
-                            ? `
-                                <button
-                                    type="button"
-                                    class="btn green approveButton">
-                                    Approve
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    <button
-                        type="button"
-                        class="btn danger deleteCommentButton">
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            const approveButton =
-                item.querySelector(
-                    ".approveButton"
-                );
-
-
-            if (approveButton) {
-
-                approveButton.addEventListener(
-                    "click",
-                    function () {
-
-                        approveComment(
-                            comment.id
-                        );
-
-                    }
-                );
-
-            }
-
-
-            const deleteButton =
-                item.querySelector(
-                    ".deleteCommentButton"
-                );
-
-
-            deleteButton.addEventListener(
-                "click",
-                function () {
-
-                    deleteComment(
-                        comment.id
-                    );
-
-                }
-            );
-
-
-            list.appendChild(item);
-
-        });
-
-
-    } catch (error) {
-
-        console.error(
-            "Load comments error:",
-            error
-        );
-
-        list.innerHTML =
-            "<p>Could not load comments.</p>";
-
-    }
-
-}
-
-
-// ========================================
-// APPROVE COMMENT
-// ========================================
-
-async function approveComment(id) {
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("comments")
-                .update({
-                    approved: true
-                })
-                .eq(
-                    "id",
-                    id
-                );
-
-
-        if (error) {
-
-            alert(
-                "Could not approve comment:\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        loadComments();
-
-
-    } catch (error) {
-
-        console.error(
-            "Approve error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ========================================
-// DELETE COMMENT
-// ========================================
-
-async function deleteComment(id) {
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete this comment?"
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const { error } =
-            await supabaseClient
-                .from("comments")
-                .delete()
-                .eq(
-                    "id",
-                    id
-                );
-
-
-        if (error) {
-
-            alert(
-                "Could not delete comment:\n" +
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        loadComments();
-
-
-    } catch (error) {
-
-        console.error(
-            "Delete comment error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ========================================
-// LOG OUT
-// ========================================
-
-async function logout() {
-
-    try {
-
-        await supabaseClient.auth.signOut();
-
-        showLogin();
-
-    } catch (error) {
-
-        console.error(
-            "Logout error:",
-            error
-        );
-
-    }
-
-}
-
-
-// ========================================
-// ESCAPE HTML
-// ========================================
-
-function escapeHTML(value) {
-
-    return String(value ?? "").replace(
-        /[&<>"']/g,
-        function (character) {
-
-            return {
-
-                "&": "&amp;",
-
-                "<": "&lt;",
-
-                ">": "&gt;",
-
-                '"': "&quot;",
-
-                "'": "&#039;"
-
-            }[character];
-
-        }
-    );
-
-}
+</body>
+</html>
