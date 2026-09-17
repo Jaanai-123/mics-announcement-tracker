@@ -1,290 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Morgan International Community School</title>
-
-    <link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morgan International Community School</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-<header class="site-header">
+<header>
+  <div class="brand">
+    <img src="school-logo.png" alt="MICS Logo">
 
-    <div class="header-container">
-
-        <div class="school-brand">
-
-            <img
-                src="school-logo.png"
-                alt="Morgan International Community School logo"
-                class="school-logo"
-            >
-
-            <div>
-
-                <h1>
-                    Morgan International Community School
-                </h1>
-
-                <p>
-                    School Announcement Tracker
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <a
-            href="admin.html"
-            class="admin-link"
-        >
-            Admin
-        </a>
-
+    <div>
+      <h1>Morgan International Community School</h1>
+      <p>School Announcement Tracker</p>
     </div>
+  </div>
 
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#announcements">Announcements</a>
+    <a href="#events">Events</a>
+    <a href="#about">About</a>
+    <a href="admin.html">Admin Area</a>
+  </nav>
 </header>
 
 
-<!-- HERO -->
+<main>
 
-<section class="hero">
+<section id="home" class="hero">
 
-    <div class="hero-content">
+  <span>WELCOME TO MICS</span>
 
-        <h2>
-            School Announcements
-        </h2>
+  <h2>Stay updated with school news.</h2>
 
-        <p>
-            Stay updated with the latest news,
-            important information and school activities.
-        </p>
+  <p>
+    Find the latest announcements, events and important information
+    from Morgan International Community School.
+  </p>
 
-    </div>
+  <a class="btn gold" href="#announcements">
+    View Announcements
+  </a>
 
 </section>
 
 
-<main class="container">
+<section id="announcements" class="section">
+
+  <div class="heading">
+
+    <div>
+      <span>LATEST NEWS</span>
+      <h2>Announcements</h2>
+    </div>
+
+    <div class="controls">
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search announcements..."
+      >
+
+      <select id="categoryFilter">
+
+        <option value="all">
+          All categories
+        </option>
+
+        <option value="important">
+          Important
+        </option>
+
+        <option value="academic">
+          Academic
+        </option>
+
+        <option value="sports">
+          Sports
+        </option>
+
+        <option value="events">
+          Events
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <div id="announcementList" class="grid"></div>
+
+  <p id="noAnnouncements" class="empty" hidden>
+    No announcements match your search.
+  </p>
+
+</section>
 
 
-    <!-- SEARCH AND CATEGORY FILTER -->
+<section id="events" class="section light">
 
-    <section class="controls">
+  <div class="heading">
 
-        <input
-            id="searchInput"
-            type="search"
-            placeholder="Search announcements..."
-        >
+    <div>
+      <span>WHAT'S COMING</span>
+      <h2>Upcoming Events</h2>
+    </div>
 
+  </div>
 
-        <select id="categoryFilter">
+  <div class="grid events">
 
-            <option value="all">
-                All Categories
-            </option>
+    <article>
+      <h3>School Events</h3>
+      <p>
+        School events can be listed here by the administration.
+      </p>
+    </article>
 
-            <option value="important">
-                Important
-            </option>
+    <article>
+      <h3>Academic Activities</h3>
+      <p>
+        Keep students and parents informed about important dates.
+      </p>
+    </article>
 
-            <option value="academic">
-                Academic
-            </option>
+    <article>
+      <h3>Sports Activities</h3>
+      <p>
+        Share sports fixtures and school activities here.
+      </p>
+    </article>
 
-            <option value="event">
-                Events
-            </option>
+  </div>
 
-            <option value="sports">
-                Sports
-            </option>
-
-            <option value="general">
-                General
-            </option>
-
-        </select>
-
-    </section>
+</section>
 
 
-    <!-- ANNOUNCEMENTS -->
+<section id="about" class="section">
 
-    <section>
+  <div class="about about-info">
 
-        <div
-            id="announcementList"
-            class="announcement-list"
-        ></div>
+    <span>ABOUT THIS SITE</span>
 
+    <h2>Stay connected with MICS.</h2>
 
-        <div
-            id="noAnnouncements"
-            class="empty-message"
-            hidden
-        >
+    <p>
+      Use this site to quickly find the latest school announcements,
+      upcoming events and important updates from Morgan International
+      Community School.
+    </p>
 
-            <h3>
-                No announcements found
-            </h3>
+    <p>
+      You can search announcements, filter them by category and share
+      comments with the school community.
+    </p>
 
-            <p>
-                There are currently no announcements
-                matching your search.
-            </p>
+    <div class="about-tip">
+      <strong>Tip:</strong>
+      Check back regularly so you never miss an important update.
+    </div>
 
-        </div>
+  </div>
 
-    </section>
-
-
-   
-                
-
-    <!-- SCHOOL ACTIVITIES -->
-
-    <section class="events-section">
-
-        <div class="section-heading">
-
-            <h2>
-                School Activities
-            </h2>
-
-            <p>
-                Important school activities and programmes.
-            </p>
-
-        </div>
-
-
-        <div class="events-grid">
-
-
-            <!-- ACADEMIC -->
-
-            <div class="event-card">
-
-                <div class="event-icon">
-                    📚
-                </div>
-
-                <h3>
-                    Academic Activities
-                </h3>
-
-                <p>
-                    Stay updated about lessons,
-                    examinations, academic competitions
-                    and other learning activities.
-                </p>
-
-            </div>
-
-
-            <!-- SPORTS -->
-
-            <div class="event-card">
-
-                <div class="event-icon">
-                    ⚽
-                </div>
-
-                <h3>
-                    Sports Activities
-                </h3>
-
-                <p>
-                    Stay updated about sports,
-                    competitions, training and
-                    school teams.
-                </p>
-
-            </div>
-
-
-            <!-- SCHOOL PROGRAMMES -->
-
-            <div class="event-card">
-
-                <div class="event-icon">
-                    🎓
-                </div>
-
-                <h3>
-                    School Programmes
-                </h3>
-
-                <p>
-                    Watch for announcements about
-                    important school programmes,
-                    celebrations and activities.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </section>
-
+</section>
 
 </main>
 
 
-<!-- FOOTER -->
+<footer>
 
-<footer class="site-footer">
+  <p>
+    &copy;
+    <span id="year"></span>
+    Morgan International Community School
+  </p>
 
-    <div class="container">
-
-        <h3>
-            Morgan International Community School
-        </h3>
-
-        <p>
-            School Announcement Tracker
-        </p>
-
-        <p class="copyright">
-
-            ©
-            <span id="year"></span>
-            Morgan International Community School.
-
-        </p>
-
-    </div>
+  <a href="admin.html">
+    Admin Area
+  </a>
 
 </footer>
 
-
-<!-- SUPABASE -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-</script>
-
-
-<!-- PUBLIC SITE JAVASCRIPT -->
-
-<script src="script.js"></script>
-
+<script src="script1.js"></script>
 
 </body>
-
 </html>
