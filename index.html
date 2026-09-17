@@ -1,157 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>MICS Announcement Tracker</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Morgan International Community School</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
+<header class="site-header">
 
-        <div class="header-content">
+    <div class="header-container">
 
-            <img src="school-logo.png" alt="MICS Logo" class="school-logo">
+        <div class="school-brand">
+
+            <img
+                src="school-logo.png"
+                alt="Morgan International Community School logo"
+                class="school-logo"
+            >
 
             <div>
-                <h1>Morgan International Community School</h1>
-                <p>Announcement Tracker</p>
+
+                <h1>
+                    Morgan International Community School
+                </h1>
+
+                <p>
+                    School Announcement Tracker
+                </p>
+
             </div>
 
         </div>
 
-        <a href="admin.html" class="admin-link">Admin</a>
 
-    </header>
+        <a
+            href="admin.html"
+            class="admin-link"
+        >
+            Admin
+        </a>
+
+    </div>
+
+</header>
 
 
-    <!-- MAIN -->
-    <main class="container">
+<section class="hero">
 
-        <!-- WELCOME -->
-        <section class="welcome">
-            <h2>Welcome to MICS</h2>
+    <div class="hero-content">
+
+        <h2>
+            School Announcements
+        </h2>
+
+        <p>
+            Stay updated with the latest news,
+            important information and school activities.
+        </p>
+
+    </div>
+
+</section>
+
+
+<main class="container">
+
+
+    <!-- SEARCH AND FILTER -->
+
+    <section class="controls">
+
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Search announcements..."
+        >
+
+
+        <select id="categoryFilter">
+
+            <option value="all">
+                All Categories
+            </option>
+
+            <option value="important">
+                Important
+            </option>
+
+            <option value="academic">
+                Academic
+            </option>
+
+            <option value="event">
+                Events
+            </option>
+
+            <option value="sports">
+                Sports
+            </option>
+
+            <option value="general">
+                General
+            </option>
+
+        </select>
+
+    </section>
+
+
+    <!-- ANNOUNCEMENTS -->
+
+    <section>
+
+        <div
+            id="announcementList"
+            class="announcement-list"
+        ></div>
+
+
+        <div
+            id="noAnnouncements"
+            class="empty-message"
+            hidden
+        >
+
+            <h3>
+                No announcements found
+            </h3>
 
             <p>
-                Stay updated with the latest announcements,
-                school news and important information.
-            </p>
-        </section>
-
-
-        <!-- ANNOUNCEMENTS -->
-        <section>
-
-            <h2 class="section-title">📢 Latest Announcements</h2>
-
-            <div id="announcementList">
-
-                <p class="loading">
-                    Loading announcements...
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- COMMENTS -->
-        <section class="comments-section">
-
-            <h2 class="section-title">💬 Comments</h2>
-
-            <p>
-                Have something to say about an announcement?
-                Leave a comment below.
+                There are currently no announcements
+                matching your search.
             </p>
 
+        </div>
 
-            <!-- COMMENT FORM -->
-            <form id="commentForm">
-
-                <input
-                    type="text"
-                    id="commentName"
-                    placeholder="Your name"
-                    required
-                >
-
-                <textarea
-                    id="commentText"
-                    placeholder="Write your comment..."
-                    rows="4"
-                    required
-                ></textarea>
-
-                <button type="submit">
-                    Send Comment
-                </button>
-
-            </form>
+    </section>
 
 
-            <p id="commentMessage"></p>
+    <!-- SCHOOL CALENDAR -->
 
+    <section class="calendar-section">
 
-            <!-- APPROVED COMMENTS -->
-            <div id="commentList">
+        <div class="section-heading">
 
-                <p class="loading">
-                    Loading comments...
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- SCHOOL CALENDAR -->
-        <section class="calendar-section">
-
-            <h2 class="section-title">
-                📅 Academic Year Calendar
+            <h2>
+                📅 2026/2027 Academic Calendar
             </h2>
 
-            <div class="calendar-container">
+            <p>
+                View the Morgan International Community School
+                academic calendar below.
+            </p>
 
-                <iframe
-                    src="Academic%20Year%20Calendar%20-%2026_27.pdf"
-                    width="100%"
-                    height="700"
-                    title="MICS Academic Year Calendar">
-                </iframe>
+        </div>
+
+
+        <div class="calendar-card">
+
+            <iframe
+                src="school-calendar.pdf"
+                class="calendar-pdf"
+                title="MICS 2026/2027 Academic Calendar">
+            </iframe>
+
+        </div>
+
+    </section>
+
+
+    <!-- SCHOOL EVENTS -->
+
+    <section class="events-section">
+
+        <div class="section-heading">
+
+            <h2>
+                School Events
+            </h2>
+
+            <p>
+                Important school activities and events.
+            </p>
+
+        </div>
+
+
+        <div class="events-grid">
+
+
+            <div class="event-card">
+
+                <div class="event-icon">
+                    📚
+                </div>
+
+                <h3>
+                    Academic Activities
+                </h3>
+
+                <p>
+                    Check announcements regularly
+                    for upcoming academic activities.
+                </p>
 
             </div>
 
-        </section>
 
-    </main>
+            <div class="event-card">
+
+                <div class="event-icon">
+                    ⚽
+                </div>
+
+                <h3>
+                    Sports Activities
+                </h3>
+
+                <p>
+                    Stay updated about sports,
+                    competitions and school teams.
+                </p>
+
+            </div>
 
 
-    <!-- FOOTER -->
-    <footer>
+            <div class="event-card">
+
+                <div class="event-icon">
+                    🎓
+                </div>
+
+                <h3>
+                    School Programmes
+                </h3>
+
+                <p>
+                    Watch for announcements about
+                    important school programmes.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="site-footer">
+
+    <div class="container">
+
+        <h3>
+            Morgan International Community School
+        </h3>
 
         <p>
-            © 2026 Morgan International Community School
+            School Announcement Tracker
         </p>
 
-        <p>
-            MICS Announcement Tracker
+        <p class="copyright">
+
+            ©
+            <span id="year"></span>
+
+            Morgan International Community School.
+
         </p>
 
-    </footer>
+    </div>
+
+</footer>
 
 
-    <!-- SUPABASE -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- SUPABASE -->
 
-    <!-- YOUR JAVASCRIPT -->
-    <script src="script.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
+
+<!-- WEBSITE JAVASCRIPT -->
+
+<script src="script.js"></script>
+
 
 </body>
+
 </html>
